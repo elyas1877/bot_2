@@ -36,7 +36,6 @@ pyparsing==2.4.7
 Pyrogram==1.1.13
 PySocks==1.7.1
 python-magic==0.4.22
-python-magic-bin==0.4.14
 python-telegram-bot==13.3
 pytube @ git+https://github.com/pytube/pytube@48ea5205b92e8e090866589be67780ce8e29a922
 pytz==2021.1
