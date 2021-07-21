@@ -19,7 +19,7 @@ import math
 class Downloade:
     def __init__(self,user:int,url :str):
         self.user = str(user)
-        self.realpath = os.path.dirname(sys.argv[0]).replace('/','\\')
+        self.realpath = os.path.split(os.path.abspath(__file__))[0]
         self.status = None
         self.file_size = 0
         self.pre = None

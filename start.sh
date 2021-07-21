@@ -1,1 +1,1 @@
-python3 -m test_2
+python3 __main__.py

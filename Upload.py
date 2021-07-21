@@ -13,7 +13,7 @@ import math
 class Upload:
 
     def __init__(self,id :str ,path :str , mimtype = None):
-        self.realpath1 = os.path.dirname(sys.argv[0]).replace('/','\\')
+        self.realpath1 = os.path.split(os.path.abspath(__file__))[0]
         self.SCOPE = ['https://www.googleapis.com/auth/drive']
         self.size = 0  
         self.address = None
@@ -55,7 +55,7 @@ class Upload:
 
     @staticmethod
     def check(id) -> bool:
-        ad = os.path.dirname(sys.argv[0]).replace('/','\\')
+        ad = os.path.split(os.path.abspath(__file__))[0]
         if os.path.exists(f'{ad}\\{str(id)}\\auth\\token.pickle'):
             return True
 
@@ -64,7 +64,7 @@ class Upload:
     @staticmethod
     def revoke(id):
         try:
-            ad = os.path.dirname(sys.argv[0]).replace('/','\\')
+            ad = os.path.split(os.path.abspath(__file__))[0]
             os.remove(f'{ad}\\{str(id)}\\auth\\token.pickle')
         except:
             pass

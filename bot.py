@@ -35,7 +35,7 @@ class Bot:
 
     def __init__(self,TOKEN :str):
         self.TOKEN=TOKEN
-        self.realpath1 = os.path.dirname(sys.argv[0]).replace('/','\\')
+        self.realpath1 = os.path.split(os.path.abspath(__file__))[0]
         self.SCOPE = ['https://www.googleapis.com/auth/drive'] 
         self.list = []
         self.download_status = None
