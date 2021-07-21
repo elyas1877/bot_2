@@ -17,4 +17,6 @@ ENV LC_ALL en_US.UTF-8
 COPY . .
 COPY netrc /root/.netrc
 
+
+
 CMD ["bash","start.sh"]
