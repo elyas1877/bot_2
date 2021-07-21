@@ -48,8 +48,8 @@ class User:
 
     def info(self):
         ad = os.path.split(os.path.abspath(__file__))[0]
-        if os.path.exists(f'{ad}\\{str(self.id)}\\auth\\token.pickle'):
-            with open(f'{ad}\\{str(self.id)}\\auth\\token.pickle', 'rb') as token:
+        if os.path.exists(f'{ad}//{str(self.id)}//auth//token.pickle'):
+            with open(f'{ad}//{str(self.id)}//auth//token.pickle', 'rb') as token:
                 creds = pickle.load(token)
         service = build('drive', 'v3', credentials=creds,cache_discovery=False)
         li = service.about().get(fields = 'storageQuota').execute()

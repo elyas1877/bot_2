@@ -104,7 +104,7 @@ class Bot:
             if users[0] == user_id:
                 has = False
                 break
-        if os.path.exists(f'{self.realpath1}\{str(user_id)}\{auth}\\token.pickle'):
+        if os.path.exists(f'{self.realpath1}/{str(user_id)}/{auth}//token.pickle'):
             has = False
             update.message.reply_text('Already Auth...!')
 
@@ -115,7 +115,7 @@ class Bot:
                     creds.refresh(Request())
                 else:
                     flow = InstalledAppFlow.from_client_secrets_file(
-                        f'{self.realpath1}\\Elyas.json', self.SCOPE)
+                        f'{self.realpath1}//Elyas.json', self.SCOPE)
                     # print(flow.authorization_url()[0])
                     print('############################################')
                     print(flow.return_url())
@@ -337,7 +337,7 @@ class Bot:
                 if not os.path.exists(path1):
                     os.makedirs(path1)
   
-                with open(f'{self.realpath1}\{str(id_)}\{auth}\\token.pickle', 'wb') as token:
+                with open(f'{self.realpath1}/{str(id_)}/{auth}//token.pickle', 'wb') as token:
                     pickle.dump(creds, token)
                 del self.list[cont]
                 print(self.list)

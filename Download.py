@@ -94,7 +94,7 @@ class Downloade:
         if not os.path.exists(ex):
             os.makedirs(ex)
 
-        f = open(f'{self.realpath}\\{self.user}\\{Download}\\{fullname}', 'wb')
+        f = open(f'{self.realpath}//{self.user}//{Download}//{fullname}', 'wb')
         try:
             meta = r1.info()
             self.file_size = int(meta['Content-Length'])
@@ -133,7 +133,7 @@ class Downloade:
             # print(self.show)
         self.complete = True 
         self.ready = True
-        self.address = f'{self.realpath}\\{self.user}\\{Download}\\{fullname}'
+        self.address = f'{self.realpath}//{self.user}//{Download}//{fullname}'
 
         r1.close()
         f.close()
@@ -159,8 +159,11 @@ class Downloade:
         ses.listen_on(6881, 6891)
         # 'save_path': f'E:\\torrent',
         # yam = lt.storage_mode_t(2)
+        ex = os.path.join(self.realpath, self.user,'Download')
+        if not os.path.exists(ex):
+            os.makedirs(ex)
         params = {
-            'save_path' : f'{self.realpath}\\{self.user}\\Download\\',
+            'save_path' : f'{self.realpath}//{self.user}//Download//',
             'storage_mode': lt.storage_mode_t(2),
             'paused': False,
             'auto_managed': True,
@@ -204,7 +207,7 @@ class Downloade:
             # end = time.time()
             # zer = '.zip'
 
-            self.address = f'{self.realpath}\\{self.user}\\Download\\{self.name}'
+            self.address = f'{self.realpath}//{self.user}//Download//{self.name}'
             if os.path.isdir(self.address):
                     zipf = zipfile.ZipFile(f'{self.address}.zip', 'w', zipfile.ZIP_DEFLATED)
                     self.zipdir(self.address, zipf)
@@ -236,6 +239,9 @@ class Downloade:
     async def tgdownload(self):
         # print(file_info)
         print('first')
+        ex = os.path.join(self.realpath, self.user,'Download')
+        if not os.path.exists(ex):
+            os.makedirs(ex)
         # with Client(api_id=5975714,session_name='BACK2gCuzoLPCD1cEBt8xlxdQ0RXnHHiQkzDFlCi_hGRTYJvGchW3jyVdqFQvpSsF4pCXa2UCEkXosrWmlbJ_uA2V-3bU5mM0ep5455ui_LDTxUQvCPdsscNrHNXWmV9XFrux4OSZtu-rcnsDcnZO3ZVmnTzyDd9cqGv00AqQ5xUUX1Q1J8BjDs825JMmohFjlOAJ6qA1Q0o-TtW2KLcQN8EC5w8naV1EA7ZvnG1WTcJdO-t8ILKrtQHMFdxNBlgQ76rQjv82O7kI99AMBWEUo3r_QkVIPr3sUyqKEsrgusm7Ef6g2OoDG6AaeiybU7pS0-sI3Tlv6fRbQ1lXYX8CH5EZ0EVuAA',api_hash='8d1ea6da21f3ddb0426938c3975fb0e7') as app:
         #    app.start()
         #    app.send_message('me','hello')
@@ -252,7 +258,7 @@ class Downloade:
         self.file_size = int(file_info.document.file_size)
         # print(file_info.document.file_size)
         # print(self.name)
-        self.address = f'{self.realpath}\\{self.user}\\Download\\{self.name}'
+        self.address = f'{self.realpath}//{self.user}//Download//{self.name}'
         print(self.address)
         self.status = 'Downloading...'
         # try:
@@ -307,6 +313,9 @@ class Downloade:
         yt_url = url
         Download = 'Download'
         print(yt_url)
+        ex = os.path.join(self.realpath, self.user,'Download')
+        if not os.path.exists(ex):
+            os.makedirs(ex)
         print ("Accessing YouTube URL...")
         try:
             video = YouTube(yt_url, on_progress_callback=self.__on_progress)
@@ -330,7 +339,7 @@ class Downloade:
         #Starts the download process
         try:
             self.status = 'Downloading...'
-            pt = video_type.download(f'{self.realpath}\\{self.user}\\{Download}',title)
+            pt = video_type.download(f'{self.realpath}//{self.user}//{Download}',title)
             print(pt)
         except Exception as e:
             print(str(e))

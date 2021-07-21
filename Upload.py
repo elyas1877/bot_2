@@ -43,8 +43,8 @@ class Upload:
             creds = None
             auth = 'auth'
             print(self.realpath1)
-            if os.path.exists(f'{self.realpath1}\\{str(self.id)}\\{auth}\\token.pickle'):
-                with open(f'{self.realpath1}\\{str(self.id)}\\{auth}\\token.pickle', 'rb') as token:
+            if os.path.exists(f'{self.realpath1}//{str(self.id)}//{auth}//token.pickle'):
+                with open(f'{self.realpath1}//{str(self.id)}//{auth}//token.pickle', 'rb') as token:
                     creds = pickle.load(token)
         except:
             print('not auth!')
@@ -56,7 +56,7 @@ class Upload:
     @staticmethod
     def check(id) -> bool:
         ad = os.path.split(os.path.abspath(__file__))[0]
-        if os.path.exists(f'{ad}\\{str(id)}\\auth\\token.pickle'):
+        if os.path.exists(f'{ad}//{str(id)}//auth//token.pickle'):
             return True
 
         return False
@@ -65,7 +65,7 @@ class Upload:
     def revoke(id):
         try:
             ad = os.path.split(os.path.abspath(__file__))[0]
-            os.remove(f'{ad}\\{str(id)}\\auth\\token.pickle')
+            os.remove(f'{ad}//{str(id)}//auth//token.pickle')
         except:
             pass
 
