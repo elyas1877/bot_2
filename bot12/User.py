@@ -66,8 +66,11 @@ class User:
         if len(self.downloads) < 2 and len(self.queue_links) > 0:
             print(len(self.downloads))
             down = self.queue_links.pop(0)
-            if 'magnet' in down.url[0]:
-                self.passe = True
+            try:
+                if 'magnet' in down.url[0]:
+                    self.passe = True
+            except :
+                pass
             if self.chek(down.file_size):
                 print(down.founder())
                 if down.founder():
