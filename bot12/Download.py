@@ -27,6 +27,7 @@ class Downloade:
         self.ready = False
         self.url = url
         self.persent = 0
+        self.start_time = None
         self.address = None
         self.cancel = False
         self.dl_file_size = 0
@@ -74,7 +75,7 @@ class Downloade:
     @property
     def show(self) -> str:
 
-        return '{} : is {}\nsize : {}\n{}\n[{} {}]\n{} \n'.format(self.name,self.status,self.__download_with_prograss(self.file_size),self.pre,int(self.persent//10)*'#',int(10 - (self.persent//10) ) * '_',self.__download_with_prograss(self.download_speed))
+        return '{} : is {}\nsize : {}\n{}\n[{} {}]\nspeed :{} \n'.format(self.name,self.status,self.__download_with_prograss(self.file_size),self.pre,int(self.persent//10)*'#',int(10 - (self.persent//10) ) * '_',self.__download_with_prograss(self.download_speed))
     
     def __direct_link(self,url):
         try:
@@ -206,7 +207,7 @@ class Downloade:
                 #         (s.progress * 100, s.download_rate / 1000, s.upload_rate / 1000, \
                 #         s.num_peers, state_str[s.state]))
                 self.status = state_str[s.state]
-                self.download_speed = s.download_rate / 1000
+                self.download_speed = s.download_rate
                 self.persent = float(s.progress * 100)
                 self.pre = r"%10d  [%3.2f%%]" % (0, self.persent)
                 time.sleep(1)

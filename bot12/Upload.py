@@ -10,6 +10,7 @@ import os,sys
 import magic
 import threading
 import math
+import time
 class Upload:
 
     def __init__(self,id :str ,path :str , mimtype = None):
@@ -22,9 +23,12 @@ class Upload:
         self.complete = False
         self.pre = None
         self.id = id
+        self.upload_speed = 0
         self.path = path
         self.mimtype = mimtype
         self.persent = 0
+        self.start_time = None
+        self.up =0
 
     def __download_with_prograss(self,file_size: int):
         if file_size == 0:
@@ -71,7 +75,7 @@ class Upload:
     @property
     def show(self) -> str:
         # print(self.size,'elyas')
-        return '{} : is {}\nsize : {}\n{}\n[{} {}]\n\n'.format(self.name,self.status,self.__download_with_prograss(self.size),self.pre,int(self.persent//10)*'#',int(10 - (self.persent//10) ) * '_')
+        return '{} : is {}\nsize : {}\n{}\n[{} {}]\nspeed: {}\n'.format(self.name,self.status,self.__download_with_prograss(self.size),self.pre,int(self.persent//10)*'#',int(10 - (self.persent//10) ) * '_',self.__download_with_prograss(self.upload_speed))
 
     def Upload(self,path:str,mimtype = None):
         try:
@@ -106,10 +110,14 @@ class Upload:
         print(self.__download_with_prograss(size))
         print(self.size)
         self.status = 'uploading...'
+        self.up =0
+        self.start_time = time.perf_counter()
         while resp is None:
             try:
                 status, resp = file.next_chunk()
                 if(size>=256*1024):
+                    self.up +=256*1024
+                    self.upload_speed = self.up//(time.perf_counter() - self.start_time)
                     size-=256*1024
                     # size=self.__download_with_prograss(size)
                 if status:
