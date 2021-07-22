@@ -201,7 +201,7 @@ class Downloade:
                 #         (s.progress * 100, s.download_rate / 1000, s.upload_rate / 1000, \
                 #         s.num_peers, state_str[s.state]))
                 self.status = state_str[s.state]
-                self.persent = int(s.progress * 100)
+                self.persent = float(s.progress * 100)
                 self.pre = r"%10d  [%3.2f%%]" % (0, self.persent)
                 time.sleep(1)
             # end = time.time()
@@ -233,7 +233,7 @@ class Downloade:
     def __progress(self , current, total):
         # self.file_size
         print('downloading..s.')
-        self.persent = (int)(current * 100 / self.file_size )
+        self.persent = (float)(current * 100 / self.file_size )
         self.pre = r"%10d  [%3.2f%%]" % (current, self.persent)
         print(self.pre)
         print('elyas ... 11')
@@ -302,7 +302,7 @@ class Downloade:
 
     def __on_progress(self,stream, chunk, bytes_remaining):
         bytes_downloaded = self.file_size - bytes_remaining 
-        self.persent = (int)(bytes_downloaded / self.file_size * 100)
+        self.persent = (float)(bytes_downloaded / self.file_size * 100)
         if self.persent > self.previousprogress:
             self.previousprogress = self.persent
             #print("{:00.0f}% downloaded".format(self.persent))

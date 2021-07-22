@@ -18,14 +18,13 @@ class Upload:
         self.size = 0  
         self.address = None
         self.status = None
-        self.name = path.split('\\')[-1]
+        self.name = path.split('//')[-1]
         self.complete = False
         self.pre = None
         self.id = id
         self.path = path
         self.mimtype = mimtype
         self.persent = 0
-
 
     def __download_with_prograss(self,file_size: int):
         if file_size == 0:
