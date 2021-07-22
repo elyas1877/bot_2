@@ -2,7 +2,7 @@ import os,sys
 # from re import T
 from urllib.request import urlopen 
 import urllib.error, urllib.parse
-import libtorrent as lt
+# import libtorrent as lt
 from pytube import YouTube
 import threading
 import time
@@ -29,6 +29,8 @@ class Downloade:
         self.persent = 0
         self.address = None
         self.cancel = False
+        self.dl_file_size = 0
+        self.download_speed = 0
         if url[0] is not None: 
             if 'youtube' in url[0] or 'youtu' in url[0]:
                 video = YouTube(url[0])
@@ -72,7 +74,7 @@ class Downloade:
     @property
     def show(self) -> str:
 
-        return '{} : is {}\nsize : {}\n{}\n[{} {}]\n\n'.format(self.name,self.status,self.__download_with_prograss(self.file_size),self.pre,int(self.persent//10)*'#',int(10 - (self.persent//10) ) * '_')
+        return '{} : is {}\nsize : {}\n{}\n[{} {}]\n{} KB/s\n'.format(self.name,self.status,self.__download_with_prograss(self.file_size),self.pre,int(self.persent//10)*'#',int(10 - (self.persent//10) ) * '_',self.download_speed//1024)
     
     def __direct_link(self,url):
         try:
@@ -95,6 +97,7 @@ class Downloade:
             os.makedirs(ex)
 
         f = open(f'{self.realpath}//{self.user}//{Download}//{fullname}', 'wb')
+        self.start_time = time.perf_counter()
         try:
             meta = r1.info()
             self.file_size = int(meta['Content-Length'])
@@ -106,8 +109,7 @@ class Downloade:
             self.complete = True
             return
 
-        file_size_dl = 0
-        block_sz = 4096
+        block_sz = 1024
         self.status = 'Downloading...'
         print('########@@@@@@@@@@@@@@@@@')
         print(self.name)
@@ -123,10 +125,13 @@ class Downloade:
                 break
             if self.cancel:
                 break
-            file_size_dl += len(buffer)
+            self.dl_file_size += len(buffer)
+            # print(self.dl_file_size)
             f.write(buffer)
-            self.persent =  file_size_dl * 100. / self.file_size
-            status = r"%10d  [%3.2f%%]" % (file_size_dl, self.persent)
+            self.download_speed = self.dl_file_size//(time.perf_counter() - self.start_time)
+            # print(self.download_speed)
+            self.persent =  self.dl_file_size * 100. / self.file_size
+            status = r"%10d  [%3.2f%%]" % (self.dl_file_size, self.persent)
             self.pre = status + chr(8)*(len(status)+1)
             # time.sleep(1)
             # print(self.pre)
@@ -201,6 +206,7 @@ class Downloade:
                 #         (s.progress * 100, s.download_rate / 1000, s.upload_rate / 1000, \
                 #         s.num_peers, state_str[s.state]))
                 self.status = state_str[s.state]
+                self.download_speed = s.download_rate / 1000
                 self.persent = float(s.progress * 100)
                 self.pre = r"%10d  [%3.2f%%]" % (0, self.persent)
                 time.sleep(1)
@@ -233,6 +239,10 @@ class Downloade:
     def __progress(self , current, total):
         # self.file_size
         print('downloading..s.')
+        self.dl_file_size +=current
+        # print(current)
+        # print(self.dl_file_size)
+        self.download_speed = current//(time.perf_counter() - self.start_time)
         self.persent = (float)(current * 100 / self.file_size )
         self.pre = r"%10d  [%3.2f%%]" % (current, self.persent)
         print(self.pre)
@@ -265,6 +275,7 @@ class Downloade:
         self.status = 'Downloading...'
         # try:
         print('stert download media')
+        self.start_time = time.perf_counter()
         try:
             mess = await bot.tel.Client.get_messages(-1001172803610,file_info.message_id)
             print(mess)
