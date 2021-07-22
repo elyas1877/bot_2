@@ -209,6 +209,7 @@ class Downloade:
 
             self.address = f'{self.realpath}//{self.user}//Download//{self.name}'
             if os.path.isdir(self.address):
+                    self.status = 'comperssing...'
                     zipf = zipfile.ZipFile(f'{self.address}.zip', 'w', zipfile.ZIP_DEFLATED)
                     self.zipdir(self.address, zipf)
                     shutil.rmtree(self.address)
