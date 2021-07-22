@@ -213,6 +213,7 @@ class Downloade:
                     self.zipdir(self.address, zipf)
                     shutil.rmtree(self.address)
                     zipf.close()
+                    self.address = f'{self.address}.zip'
 
             self.complete = True
             self.ready = True
