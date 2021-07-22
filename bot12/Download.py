@@ -70,11 +70,11 @@ class Downloade:
         if self.url[0] is not None:
             return True
         return False
-    
+                                                                                                                                            #,self.download_speed//1024
     @property
     def show(self) -> str:
 
-        return '{} : is {}\nsize : {}\n{}\n[{} {}]\n{} KB/s\n'.format(self.name,self.status,self.__download_with_prograss(self.file_size),self.pre,int(self.persent//10)*'#',int(10 - (self.persent//10) ) * '_',self.download_speed//1024)
+        return '{} : is {}\nsize : {}\n{}\n[{} {}]\n{} \n'.format(self.name,self.status,self.__download_with_prograss(self.file_size),self.pre,int(self.persent//10)*'#',int(10 - (self.persent//10) ) * '_',self.__download_with_prograss(self.download_speed))
     
     def __direct_link(self,url):
         try:
