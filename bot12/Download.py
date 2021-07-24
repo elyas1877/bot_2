@@ -235,6 +235,10 @@ class Downloade:
             counter+=1
             if counter == 120:
                 self.status = 'not working...'
+                try:
+                    ses.remove_torrent(handle)
+                except:
+                    pass
                 self.complete = True
                 return
         
@@ -273,7 +277,10 @@ class Downloade:
                         self.status = 'comperssing...'
                         zipf = zipfile.ZipFile(f'{self.address}.zip', 'w', zipfile.ZIP_DEFLATED)
                         self.zipdir(self.address, zipf)
-                        shutil.rmtree(self.address)
+                        try:
+                            shutil.rmtree(self.address)
+                        except:
+                            pass
                         zipf.close()
                         self.address = f'{self.address}.zip'
 
@@ -282,15 +289,25 @@ class Downloade:
                 print(handle.name(), "COMPLETE")
             else:
                 try:
+                    print('here handle!')
                     ses.remove_torrent(handle)
-                    ad = f'{self.realpath}//{self.user}//Download//{self.name}'
-                    if os.path.isdir(ad):
-                        shutil.rmtree(self.address)
-                    else:
-                        os.remove(ad)
-                    self.complete = True
                 except:
                     pass
+                ad = f'{self.realpath}//{self.user}//Download//{self.name}'
+                if os.path.isdir(ad):
+                    try:
+                        print('removing!')
+                        shutil.rmtree(self.address)
+                    except:
+                        pass
+                else:
+                    try:
+                        os.remove(ad)
+                    except:
+                        pass
+                self.complete = True
+                
+
 
         # print("Elapsed Time: ",int((end-begin)//60),"min :", int((end-begin)%60), "sec")
         # print(datetime.datetime.now())  
