@@ -288,12 +288,10 @@ class Downloade:
                 self.ready = True
                 print(handle.name(), "COMPLETE")
             else:
-                try:
-                    print('here handle!')
-                    ses.remove_torrent(handle)
-                    print('here handle2!')
-                except:
-                    pass
+                print('here handle!')
+                ses.remove_torrent(handle)
+                print('here handle2!')
+                time.sleep(2)
                 ad = f'{self.realpath}//{self.user}//Download//{self.name}'
                 print(ad)
                 print('is dir : ',os.path.isdir(ad))
