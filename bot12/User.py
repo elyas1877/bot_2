@@ -10,6 +10,7 @@ from Download import Downloade
 import Upload
 # import asyncio
 import bot
+import shutil
 # loope = asyncio.new_event_loop()
 # looper :bool = True
 # print('run')
@@ -121,6 +122,8 @@ class User:
     
     def user_deleter(self):
         if len(self.downloads)==0 and len(self.queue_links)==0 and len(self.paths)==0 and self.uploads is None:
+            ad = os.path.split(os.path.abspath(__file__))[0]
+            shutil.rmtree(f'{ad}//{str(self.id)}//Download')
             return True
         return False
     

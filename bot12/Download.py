@@ -299,6 +299,7 @@ class Downloade:
                     try:
                         print('removing!')
                         shutil.rmtree(self.address)
+                        print('removing2!')
                     except:
                         pass
                 else:
@@ -308,6 +309,7 @@ class Downloade:
                     except:
                         pass
                 self.complete = True
+                return
                 
 
 
