@@ -1,4 +1,6 @@
-import os,sys
+
+import User
+import os
 # from re import T
 from urllib.request import urlopen 
 import urllib.error, urllib.parse
@@ -6,10 +8,13 @@ import libtorrent as lt
 from pytube import YouTube
 import threading
 import time
+import pickle
 import zipfile
 import shutil
 # from pyrogram import Client
 import bot
+from googleapiclient.discovery import build
+
 import math
 # import test_2
 # app = Client(api_id=5975714,session_name='BACK2gCuzoLPCD1cEBt8xlxdQ0RXnHHiQkzDFlCi_hGRTYJvGchW3jyVdqFQvpSsF4pCXa2UCEkXosrWmlbJ_uA2V-3bU5mM0ep5455ui_LDTxUQvCPdsscNrHNXWmV9XFrux4OSZtu-rcnsDcnZO3ZVmnTzyDd9cqGv00AqQ5xUUX1Q1J8BjDs825JMmohFjlOAJ6qA1Q0o-TtW2KLcQN8EC5w8naV1EA7ZvnG1WTcJdO-t8ILKrtQHMFdxNBlgQ76rQjv82O7kI99AMBWEUo3r_QkVIPr3sUyqKEsrgusm7Ef6g2OoDG6AaeiybU7pS0-sI3Tlv6fRbQ1lXYX8CH5EZ0EVuAA',api_hash='8d1ea6da21f3ddb0426938c3975fb0e7')
@@ -17,7 +22,7 @@ import math
 # app.start()
 
 class Downloade:
-    def __init__(self,user:int,url :str):
+    def __init__(self,user:int,url :str,info:User):
         self.user = str(user)
         self.realpath = os.path.split(os.path.abspath(__file__))[0]
         self.status = None
@@ -32,27 +37,29 @@ class Downloade:
         self.cancel = False
         self.dl_file_size = 0
         self.download_speed = 0
-        if url[0] is not None: 
-            if 'youtube' in url[0] or 'youtu' in url[0]:
-                video = YouTube(url[0])
-                video_type = video.streams.get_highest_resolution()
-                self.file_size = int(video_type.filesize)
-            else:
-                try:
-                    self.name = str(url[0]).split('/')[-1]
-                    # print('#####################')
-                    # print(self.name)
-                    # print('#####################')
-                    r1=urlopen(url[0])
-                    meta = r1.info()
-                    # print(meta)
-                    self.file_size = int(meta['Content-Length'])
-                    print(self.file_size)
-                except:
-                    print('error')
-        else:
-            self.name = url[1].document.file_name
-            self.file_size = int(url[1].document.file_size)
+        self.info_ = info
+        self.name = None
+        # if url[0] is not None: 
+        #     if 'youtube' in url[0] or 'youtu' in url[0]:
+        #         video = YouTube(url[0])
+        #         video_type = video.streams.get_highest_resolution()
+        #         self.file_size = int(video_type.filesize)
+        #     else:
+        #         try:
+        #             self.name = str(url[0]).split('/')[-1]
+        #             # print('#####################')
+        #             # print(self.name)
+        #             # print('#####################')
+        #             r1=urlopen(url[0])
+        #             meta = r1.info()
+        #             # print(meta)
+        #             self.file_size = int(meta['Content-Length'])
+        #             print(self.file_size)
+        #         except:
+        #             print('error')
+        # else:
+        #     self.name = url[1].document.file_name
+        #     self.file_size = int(url[1].document.file_size)
 
         self.previousprogress = 0
         self.mimtype = None
@@ -66,6 +73,39 @@ class Downloade:
         p = math.pow(1024, i)
         s = round(file_size / p, 2)
         return "%s %s" % (s, size_name[i])
+
+    def info(self):
+        # ad = os.path.split(os.path.abspath(__file__))[0]
+        if os.path.exists(f'{self.realpath}//{self.user}//auth//token.pickle'):
+            with open(f'{self.realpath}//{self.user}//auth//token.pickle', 'rb') as token:
+                creds = pickle.load(token)
+            service = build('drive', 'v3', credentials=creds,cache_discovery=False)
+            li = service.about().get(fields = 'storageQuota').execute()
+            token.close()
+            return int(li['storageQuota']['limit']) , int(li['storageQuota']['usage'])
+        else:
+            return
+
+
+    def chek(self):
+        on_prossess = 0
+        on_prossess += int(self.file_size)
+        limit , storage = self.info()
+        on_prossess += storage
+        for prossess in self.info_.downloads:
+            on_prossess += prossess.file_size
+        try:
+            on_prossess += self.info_.uploads.size
+        except:
+            pass
+        al = limit - on_prossess
+        print('size : ',al)
+        if al >= 0 :
+            print('size : ',al)
+            return True
+        return False
+
+
 
     def founder(self):
         if self.url[0] is not None:
@@ -109,40 +149,46 @@ class Downloade:
             print(self.status,'2')
             self.complete = True
             return
+        if self.chek():
+            block_sz = 1024
+            self.status = 'Downloading...'
+            print('########@@@@@@@@@@@@@@@@@')
+            print(self.name)
+            print('########@@@@@@@@@@@@@@@@@')
+            while True:
+                try:
+                    buffer = r1.read(block_sz)
+                except Exception as e:
+                    print(str(e))
+                    print('err!!!')
+                    self.__direct_link(url)
+                if not buffer:
+                    break
+                if self.cancel:
+                    break
+                self.dl_file_size += len(buffer)
+                # print(self.dl_file_size)
+                f.write(buffer)
+                self.download_speed = self.dl_file_size//(time.perf_counter() - self.start_time)
+                # print(self.download_speed)
+                self.persent =  self.dl_file_size * 100. / self.file_size
+                status = r"%10d  [%3.2f%%]" % (self.dl_file_size, self.persent)
+                self.pre = status + chr(8)*(len(status)+1)
+                # time.sleep(1)
+                # print(self.pre)
+                # print(self.show)
+            self.complete = True 
+            self.ready = True
+            self.address = f'{self.realpath}//{self.user}//{Download}//{fullname}'
 
-        block_sz = 1024
-        self.status = 'Downloading...'
-        print('########@@@@@@@@@@@@@@@@@')
-        print(self.name)
-        print('########@@@@@@@@@@@@@@@@@')
-        while True:
-            try:
-                buffer = r1.read(block_sz)
-            except Exception as e:
-                print(str(e))
-                print('err!!!')
-                self.__direct_link(url)
-            if not buffer:
-                break
-            if self.cancel:
-                break
-            self.dl_file_size += len(buffer)
-            # print(self.dl_file_size)
-            f.write(buffer)
-            self.download_speed = self.dl_file_size//(time.perf_counter() - self.start_time)
-            # print(self.download_speed)
-            self.persent =  self.dl_file_size * 100. / self.file_size
-            status = r"%10d  [%3.2f%%]" % (self.dl_file_size, self.persent)
-            self.pre = status + chr(8)*(len(status)+1)
-            # time.sleep(1)
-            # print(self.pre)
-            # print(self.show)
-        self.complete = True 
-        self.ready = True
-        self.address = f'{self.realpath}//{self.user}//{Download}//{fullname}'
-
-        r1.close()
-        f.close()
+            r1.close()
+            f.close()
+        else:
+            self.status = 'free up space...'
+            self.complete = True
+            r1.close()
+            f.close()
+            return
 
     def starter(self):
         try:
@@ -187,45 +233,64 @@ class Downloade:
         while (not handle.has_metadata()):
             time.sleep(1)
             counter+=1
-            if counter == 60:
+            if counter == 120:
                 self.status = 'not working...'
                 self.complete = True
                 return
+        
+
             
         print ('Got Metadata, Starting Torrent Download...')
         if handle.has_metadata():
+            
 
             print("Starting", )
             self.name = handle.name()
             self.file_size = int(handle.get_torrent_info().total_size())
+            if self.chek():
+                try:
+                    while (handle.status().state != lt.torrent_status.seeding):
+                        s = handle.status()
+                        state_str = ['queued', 'checking', 'downloading metadata', \
+                                'downloading', 'finished', 'seeding', 'allocating']
+                        # print ('%.2f%% complete (down: %.1f kb/s up: %.1f kB/s peers: %d) %s ' % \
+                        #         (s.progress * 100, s.download_rate / 1000, s.upload_rate / 1000, \
+                        #         s.num_peers, state_str[s.state]))
+                        self.status = state_str[s.state]
+                        self.download_speed = s.download_rate
+                        self.persent = float(s.progress * 100)
+                        self.pre = r"%10d  [%3.2f%%]" % (0, self.persent)
+                        time.sleep(1)
+                except:
+                    self.status = 'not working...'
+                    self.complete = True
+                    pass
+                # end = time.time()
+                # zer = '.zip'
 
-            while (handle.status().state != lt.torrent_status.seeding):
-                s = handle.status()
-                state_str = ['queued', 'checking', 'downloading metadata', \
-                        'downloading', 'finished', 'seeding', 'allocating']
-                # print ('%.2f%% complete (down: %.1f kb/s up: %.1f kB/s peers: %d) %s ' % \
-                #         (s.progress * 100, s.download_rate / 1000, s.upload_rate / 1000, \
-                #         s.num_peers, state_str[s.state]))
-                self.status = state_str[s.state]
-                self.download_speed = s.download_rate
-                self.persent = float(s.progress * 100)
-                self.pre = r"%10d  [%3.2f%%]" % (0, self.persent)
-                time.sleep(1)
-            # end = time.time()
-            # zer = '.zip'
+                self.address = f'{self.realpath}//{self.user}//Download//{self.name}'
+                if os.path.isdir(self.address):
+                        self.status = 'comperssing...'
+                        zipf = zipfile.ZipFile(f'{self.address}.zip', 'w', zipfile.ZIP_DEFLATED)
+                        self.zipdir(self.address, zipf)
+                        shutil.rmtree(self.address)
+                        zipf.close()
+                        self.address = f'{self.address}.zip'
 
-            self.address = f'{self.realpath}//{self.user}//Download//{self.name}'
-            if os.path.isdir(self.address):
-                    self.status = 'comperssing...'
-                    zipf = zipfile.ZipFile(f'{self.address}.zip', 'w', zipfile.ZIP_DEFLATED)
-                    self.zipdir(self.address, zipf)
-                    shutil.rmtree(self.address)
-                    zipf.close()
-                    self.address = f'{self.address}.zip'
-
-            self.complete = True
-            self.ready = True
-            print(handle.name(), "COMPLETE")
+                self.complete = True
+                self.ready = True
+                print(handle.name(), "COMPLETE")
+            else:
+                try:
+                    ses.remove_torrent(handle)
+                    ad = f'{self.realpath}//{self.user}//Download//{self.name}'
+                    if os.path.isdir(ad):
+                        shutil.rmtree(self.address)
+                    else:
+                        os.remove(ad)
+                    self.complete = True
+                except:
+                    pass
 
         # print("Elapsed Time: ",int((end-begin)//60),"min :", int((end-begin)%60), "sec")
         # print(datetime.datetime.now())  
@@ -271,34 +336,40 @@ class Downloade:
         self.file_size = int(file_info.document.file_size)
         # print(file_info.document.file_size)
         # print(self.name)
-        self.address = f'{self.realpath}//{self.user}//Download//{self.name}'
-        print(self.address)
-        self.status = 'Downloading...'
-        # try:
-        print('stert download media')
-        self.start_time = time.perf_counter()
-        try:
-            mess = await bot.tel.Client.get_messages(-1001172803610,file_info.message_id)
-            print(mess)
-            await bot.tel.Client.download_media(message=mess,file_name=self.address,progress=self.__progress,)
-        except:
+        if self.chek():
+            self.address = f'{self.realpath}//{self.user}//Download//{self.name}'
+            print(self.address)
+            self.status = 'Downloading...'
+            # try:
+            print('stert download media')
+            self.start_time = time.perf_counter()
+            try:
+                mess = await bot.tel.Client.get_messages(-1001172803610,file_info.message_id)
+                print(mess)
+                await bot.tel.Client.download_media(message=mess,file_name=self.address,progress=self.__progress,)
+            except:
+                self.complete = True
+                return
+                # pass
+                # await app.send_message('me','hello')
+                # print(mess)
+            
+            # except Exception as e:
+            #     print(str(e))
+            #     print('error')
+            #     self.status = 'not working...'
+            #     time.sleep(4000)
+            #     self.tgdownload()
+            
+            self.mimtype=file_info.document.mime_type
+            self.ready = True
             self.complete = True
+            print('complete')
+        else:
+            self.complete = True
+            self.status = 'free up space...'
             return
-            # pass
-            # await app.send_message('me','hello')
-            # print(mess)
-        
-        # except Exception as e:
-        #     print(str(e))
-        #     print('error')
-        #     self.status = 'not working...'
-        #     time.sleep(4000)
-        #     self.tgdownload()
-        
-        self.mimtype=file_info.document.mime_type
-        self.ready = True
-        self.complete = True
-        print('complete')
+
         # app.stop()
 
     # def tg_starter(self):
@@ -344,30 +415,36 @@ class Downloade:
         video_type = video.streams.get_highest_resolution()
         print(video_type.filesize)
         self.file_size = int(video_type.filesize)
-        #Gets the title of the video
-        title = video.title
-        #Prepares the file for download
-        print ("Fetching: {}...".format(title))
-        print(title)
-        self.name = title
-        #Starts the download process
-        try:
-            self.status = 'Downloading...'
-            pt = video_type.download(f'{self.realpath}//{self.user}//{Download}',title)
-            print(pt)
-        except Exception as e:
-            print(str(e))
-            print('error...!')
-            self.status = 'not working...'
-            time.sleep(4000)
-            self.__downloadYouTube(url)
+        if self.chek():
 
-        print ("Ready to download another video.\n\n")
-        self.previousprogress = 0
-        self.complete = True
-        self.ready = True
-        self.address = pt
-        self.mimtype = video_type.mime_type
+        #Gets the title of the video
+            title = video.title
+            #Prepares the file for download
+            print ("Fetching: {}...".format(title))
+            print(title)
+            self.name = title
+            #Starts the download process
+            try:
+                self.status = 'Downloading...'
+                pt = video_type.download(f'{self.realpath}//{self.user}//{Download}',title)
+                print(pt)
+            except Exception as e:
+                print(str(e))
+                print('error...!')
+                self.status = 'not working...'
+                time.sleep(4000)
+                self.__downloadYouTube(url)
+
+            print ("Ready to download another video.\n\n")
+            self.previousprogress = 0
+            self.complete = True
+            self.ready = True
+            self.address = pt
+            self.mimtype = video_type.mime_type
+        else:
+            self.complete = True
+            self.status = 'free up space...'
+            return
     def yt_starter(self):
         try:
             threading.Thread(target=self.__downloadYouTube,args=(self.url[0],)).start()

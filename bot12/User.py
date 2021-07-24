@@ -26,39 +26,39 @@ class User:
         self.passe = False
         # self.loop = loop
 
-    def chek(self,size):
-        if self.passe :
-            return True
-        on_prossess = 0
-        on_prossess += int(size)
-        limit , storage = self.info()
-        on_prossess += storage
-        for prossess in self.downloads:
-            on_prossess += prossess.file_size
-        try:
-            on_prossess += self.uploads.size
-        except:
-            pass
-        al = limit - on_prossess
-        if al >= 0 :
-            print('size : ',al)
-            return True
-        return False
+    # def chek(self,size):
+    #     if self.passe :
+    #         return True
+    #     on_prossess = 0
+    #     on_prossess += int(size)
+    #     limit , storage = self.info()
+    #     on_prossess += storage
+    #     for prossess in self.downloads:
+    #         on_prossess += prossess.file_size
+    #     try:
+    #         on_prossess += self.uploads.size
+    #     except:
+    #         pass
+    #     al = limit - on_prossess
+    #     if al >= 0 :
+    #         print('size : ',al)
+    #         return True
+    #     return False
 
 
-    def info(self):
-        ad = os.path.split(os.path.abspath(__file__))[0]
-        if os.path.exists(f'{ad}//{str(self.id)}//auth//token.pickle'):
-            with open(f'{ad}//{str(self.id)}//auth//token.pickle', 'rb') as token:
-                creds = pickle.load(token)
-        service = build('drive', 'v3', credentials=creds,cache_discovery=False)
-        li = service.about().get(fields = 'storageQuota').execute()
-        # service = self.authorization().about().get(fields = 'storageQuota').execute()
+    # def info(self):
+    #     ad = os.path.split(os.path.abspath(__file__))[0]
+    #     if os.path.exists(f'{ad}//{str(self.id)}//auth//token.pickle'):
+    #         with open(f'{ad}//{str(self.id)}//auth//token.pickle', 'rb') as token:
+    #             creds = pickle.load(token)
+    #     service = build('drive', 'v3', credentials=creds,cache_discovery=False)
+    #     li = service.about().get(fields = 'storageQuota').execute()
+    #     # service = self.authorization().about().get(fields = 'storageQuota').execute()
         
         
-        return int(li['storageQuota']['limit']) , int(li['storageQuota']['usage'])
+        # return int(li['storageQuota']['limit']) , int(li['storageQuota']['usage'])
     def download(self,link):
-        self.queue_links.append(Downloade(self.id,link))
+        self.queue_links.append(Downloade(self.id,link,self))
     
     
     
@@ -66,28 +66,24 @@ class User:
         if len(self.downloads) < 2 and len(self.queue_links) > 0:
             print(len(self.downloads))
             down = self.queue_links.pop(0)
-            try:
-                if 'magnet' in down.url[0]:
-                    self.passe = True
-            except :
-                pass
-            if self.chek(down.file_size):
-                print(down.founder())
-                if down.founder():
-                    if 'youtube' in down.url[0] or 'youtu' in down.url[0]:
-                        down.yt_starter()
-                        self.downloads.append(down)
-                        
-                    elif 'magnet' in down.url[0]:
-                        down.tor_starter()
-                        self.downloads.append(down)
-                        self.passe = True
 
-                    else:
-                        down.starter()
-                        self.downloads.append(down)
-                        print(self.downloads)
+            # if self.chek(down.file_size):
+            #     print(down.founder())
+            if down.founder():
+                if 'youtube' in down.url[0] or 'youtu' in down.url[0]:
+                    down.yt_starter()
+                    self.downloads.append(down)
+                        
+                elif 'magnet' in down.url[0]:
+                    down.tor_starter()
+                    self.downloads.append(down)
+                    self.passe = True
+
                 else:
+                    down.starter()
+                    self.downloads.append(down)
+                    print(self.downloads)
+            else:
                     bot.loop.create_task(down.tgdownload())
                     self.downloads.append(down)
                 # pass
