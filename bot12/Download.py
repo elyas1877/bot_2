@@ -291,10 +291,12 @@ class Downloade:
                 try:
                     print('here handle!')
                     ses.remove_torrent(handle)
+                    print('here handle2!')
                 except:
                     pass
                 ad = f'{self.realpath}//{self.user}//Download//{self.name}'
                 print(ad)
+                print('is dir : ',os.path.isdir(ad))
                 if os.path.isdir(ad):
                     try:
                         print('removing!')
