@@ -373,6 +373,7 @@ class Bot:
         dispatcher.add_handler(CommandHandler("auth", self.send_auth))
         dispatcher.add_handler(CommandHandler("down", self.down))
         dispatcher.add_handler(CommandHandler("del", self.dele))
+        dispatcher.add_handler(CommandHandler("ls", self.ls))
         # revoke
         # storage
         dispatcher.add_handler(CommandHandler("storage", self.storage))
