@@ -24,6 +24,7 @@ import time
 import asyncio
 import User
 from Upload import Upload
+import shutil
 from pyrogram import Client
 import math
 from urllib.parse import urlparse
@@ -86,7 +87,21 @@ class Bot:
         else:
             update.message.reply_text('First Auth !')
         # pass
- 
+    def ls(self, update: Update, context: CallbackContext) -> None:
+        id_ = update.message.from_user.id
+        ad = f'{self.realpath1}//{str(id_)}//Download'
+        text =''
+        try:
+            onlyfiles = [f for f in os.listdir(ad) if os.path.isfile(os.path.join(ad, f))]
+            for i in onlyfiles:
+                text += i
+                text +='\n'
+        
+            update.message.reply_text(text)
+        except:
+            update.message.reply_text('no files in here')
+
+        
     def start(self, update: Update, context: CallbackContext) -> None:
         update.message.reply_text('Start!')
         print(update.message.chat_id)
@@ -243,17 +258,23 @@ class Bot:
     
     def dele(self, update: Update, context: CallbackContext) -> None:
         id_ =  update.message.from_user.id
-        user = None
-        
-        for i in self.users:
-            if i.id == id_:
-                user = i
-
-        if user is None:
-            update.message.reply_text('not in download...')
-        else:
-            self.users.remove(user)
+        ad = f'{self.realpath1}//{str(id_)}//Download'
+        try:
+            shutil.rmtree(ad)
             update.message.reply_text('removed...')
+        except:
+            update.message.reply_text('not removed...')
+        # user = None
+        
+        # for i in self.users:
+        #     if i.id == id_:
+        #         user = i
+
+        # if user is None:
+        #     update.message.reply_text('not in download...')
+        # else:
+        #     self.users.remove(user)
+        # update.message.reply_text('removed...')
 
     def down(self, update: Update, context: CallbackContext) -> None:
         id_ =  update.message.from_user.id
