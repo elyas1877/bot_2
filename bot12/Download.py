@@ -271,7 +271,7 @@ class Downloade:
                     pass
                 # end = time.time()
                 # zer = '.zip'
-
+                time.sleep(5)
                 self.address = f'{self.realpath}//{self.user}//Download//{self.name}'
                 if os.path.isdir(self.address):
                         self.status = 'comperssing...'
