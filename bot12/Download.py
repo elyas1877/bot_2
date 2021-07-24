@@ -294,6 +294,7 @@ class Downloade:
                 except:
                     pass
                 ad = f'{self.realpath}//{self.user}//Download//{self.name}'
+                print(ad)
                 if os.path.isdir(ad):
                     try:
                         print('removing!')
@@ -302,6 +303,7 @@ class Downloade:
                         pass
                 else:
                     try:
+                        print('removing 2!')
                         os.remove(ad)
                     except:
                         pass
