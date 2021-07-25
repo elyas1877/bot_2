@@ -64,11 +64,23 @@ class Bot:
         # update.message.reply_text(update)
         # print(update)
         print(update.message.reply_to_message)
+    
+    def __info(self,id_):
+        # ad = os.path.split(os.path.abspath(__file__))[0]
+            if os.path.exists(f'{self.realpath1}//{id_}//auth//token.pickle'):
+                with open(f'{self.realpath1}//{id_}//auth//token.pickle', 'rb') as token:
+                    creds = pickle.load(token)
+            service = build('drive', 'v3', credentials=creds,cache_discovery=False)
+            li = service.about().get(fields = 'storageQuota').execute()
+            # service = self.authorization().about().get(fields = 'storageQuota').execute()
+            return int(li['storageQuota']['limit']) , int(li['storageQuota']['usage'])
+
+
     def storage(self, update: Update, context: CallbackContext) -> None:
         Id = update.message.from_user.id
         if Upload.check(Id):
-            user = User.User(Id)
-            limit , storage = user.info()
+            # user = User.User(Id)
+            limit , storage = self.__info(Id)
             free = limit - storage
             text = f'limit : {self.__download_with_prograss(limit)}\nstorage : {self.__download_with_prograss(storage)}\nfree : {self.__download_with_prograss(free)}'
             update.message.reply_text(text)
