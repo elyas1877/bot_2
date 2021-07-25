@@ -158,7 +158,7 @@ class Downloade:
             req = Request(url,data=None,headers={'User-Agent':f'{self.get_random_useragent()}'})
             r1=urlopen(req,timeout=20)
         except urllib.error.HTTPError as e:
-            if e.code == 416 or e.code == 404:
+            if e.code == 416 or e.code == 404 or e.code == 403 :
                 self.status = 'not working...'
                 print(self.status,'1')
                 self.complete = True
