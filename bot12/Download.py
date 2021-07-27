@@ -77,6 +77,7 @@ class Downloade:
 
     def info(self):
         # ad = os.path.split(os.path.abspath(__file__))[0]
+        print(f'{self.realpath}//{self.user}//auth//token.pickle')
         if os.path.exists(f'{self.realpath}//{self.user}//auth//token.pickle'):
             with open(f'{self.realpath}//{self.user}//auth//token.pickle', 'rb') as token:
                 creds = pickle.load(token)
@@ -91,9 +92,11 @@ class Downloade:
     def chek(self):
         on_prossess = 0
         on_prossess += int(self.file_size)
+        print(self.file_size)
         limit , storage = self.info()
         on_prossess += storage
         for prossess in self.info_.downloads:
+            print(self.info_.user_name)
             on_prossess += prossess.file_size
         try:
             on_prossess += self.info_.uploads.size
