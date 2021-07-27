@@ -5,9 +5,13 @@ from urllib.request import urlopen
 # # wd = os.getcwd()
 # os.path.split(os.path.abspath(__file__))[0]
 
-r1 = urlopen('https://dl6.downloadha.com/hosein/animation/June2021/The.Owl.House.S02/720p.x264/The.Owl.House.S02E07.720p.HULU.WEBRip.x264-DLHA_www.Downloadha.com_.mkv')
+# r1 = urlopen('https://dl6.downloadha.com/hosein/animation/June2021/The.Owl.House.S02/720p.x264/The.Owl.House.S02E07.720p.HULU.WEBRip.x264-DLHA_www.Downloadha.com_.mkv')
 
-print(r1.info())
+# print(r1.info())
 
 
+for i in range(8):
+    if i == 4:
+        continue
+    print(i)
 

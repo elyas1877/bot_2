@@ -92,18 +92,30 @@ class Downloade:
     def chek(self):
         on_prossess = 0
         on_prossess += int(self.file_size)
+        print('insert size : ',on_prossess)
         print(self.file_size)
         limit , storage = self.info()
         on_prossess += storage
+        print('storage + insert sizs : ',on_prossess)
+
         for prossess in self.info_.downloads:
             print(self.info_.user_name)
+            if prossess.file_size == int(self.file_size):
+                continue
             on_prossess += prossess.file_size
+        
+        # print(downloads on_prossess)
+
         try:
             on_prossess += self.info_.uploads.size
+            print(on_prossess)
+
         except:
+            print('upload error')
             pass
         al = limit - on_prossess
-        print('size : ',al)
+        print('size : ',self.__download_with_prograss(al * -1))
+        al = al * -1
         if al >= 0 :
             print('size : ',al)
             return True
@@ -295,6 +307,7 @@ class Downloade:
             print("Starting", )
             self.name = handle.name()
             self.file_size = int(handle.get_torrent_info().total_size())
+            print(self.file_size)
             if self.chek():
                 try:
                     while (handle.status().state != lt.torrent_status.seeding):
@@ -311,11 +324,13 @@ class Downloade:
                         time.sleep(1)
                 except:
                     self.status = 'not working...'
+                    ses.remove_torrent(handle)
                     self.complete = True
-                    pass
+                    # pass
                 # end = time.time()
                 # zer = '.zip'
                 time.sleep(5)
+                ses.remove_torrent(handle)
                 self.address = f'{self.realpath}//{self.user}//Download//{self.name}'
                 if os.path.isdir(self.address):
                         self.status = 'comperssing...'
