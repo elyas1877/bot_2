@@ -115,7 +115,6 @@ class Downloade:
             pass
         al = limit - on_prossess
         # print('size : ',self.__download_with_prograss(al * -1))
-        al = al * -1
         if al >= 0 :
             print('size : ',al)
             return True
@@ -286,6 +285,7 @@ class Downloade:
         # print(datetime.datetime.now())
 
         print ('Downloading Metadata...')
+        self.status = 'Downloading Metadata...'
         while (not handle.has_metadata()):
             time.sleep(1)
             counter+=1
@@ -350,6 +350,7 @@ class Downloade:
                 print('here handle!')
                 ses.remove_torrent(handle)
                 print('here handle2!')
+                self.status = 'free up space...'
                 time.sleep(5)
                 ad = f'{self.realpath}//{self.user}//Download//{self.name}'
                 print(ad)
