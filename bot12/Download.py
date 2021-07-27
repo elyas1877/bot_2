@@ -114,7 +114,7 @@ class Downloade:
             print('upload error')
             pass
         al = limit - on_prossess
-        print('size : ',self.__download_with_prograss(al * -1))
+        # print('size : ',self.__download_with_prograss(al * -1))
         al = al * -1
         if al >= 0 :
             print('size : ',al)
