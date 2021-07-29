@@ -271,9 +271,15 @@ class Bot:
             return all([result.scheme, result.netloc])
         except:
             return False
+
+    def __extracer(text, prefix):
+
+        if text.startswith(prefix):
+            return text[len(prefix):]
+
     def cancel(self, update: Update, context: CallbackContext) -> None:
         id_ =  update.message.from_user.id
-        download_id = update.message.text.removeprefix('/cancel ')
+        download_id = self.__extracer(update.message.text,'/cancel ')
         user = None
         for i in self.users:
             if i.id == id_:
@@ -286,7 +292,6 @@ class Bot:
         else:
             update.message.reply_text('not canceled')
 
-    
     def dele(self, update: Update, context: CallbackContext) -> None:
         id_ =  update.message.from_user.id
         ad = f'{self.realpath1}//{str(id_)}//Download'
