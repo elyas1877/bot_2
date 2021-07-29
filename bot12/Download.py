@@ -347,18 +347,28 @@ class Downloade:
                         time.sleep(1)
                 except:
                     self.status = 'not working...'
-                    ses.remove_torrent(handle)
+                    try:
+                        ses.remove_torrent(handle)
+                    except:
+                        pass
                     time.sleep(3)
                     if os.path.isdir(f'{self.realpath}//{self.user}//Download//{self.name}'):
                         shutil.rmtree(f'{self.realpath}//{self.user}//Download//{self.name}')
                         self.complete = True
                         print(1)
                         return
+                    else:
+                        os.remove(f'{self.realpath}//{self.user}//Download//{self.name}')
+                        self.complete = True
+                        return
                     # pass
                 # end = time.time()
                 # zer = '.zip'
                 if self.cancel:
-                    ses.remove_torrent(handle)
+                    try:
+                        ses.remove_torrent(handle)
+                    except:
+                        pass
                     time.sleep(3)
                     if os.path.isdir(f'{self.realpath}//{self.user}//Download//{self.name}'):
                         shutil.rmtree(f'{self.realpath}//{self.user}//Download//{self.name}')

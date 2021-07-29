@@ -75,7 +75,7 @@ class Upload:
     @property
     def show(self) -> str:
         # print(self.size,'elyas')
-        return '{} : is {}\nsize : {}\n{}\n[{} {}]\nspeed: {}\n'.format(self.name,self.status,self.__download_with_prograss(self.size),self.pre,int(self.persent//10)*'#',int(10 - (self.persent//10) ) * '_',self.__download_with_prograss(self.upload_speed))
+        return 'Name : {}\nStatus : {}\nsize : {}\n{}\n[{} {}]\nspeed: {}\n'.format(self.name,self.status,self.__download_with_prograss(self.size),self.pre,int(self.persent//10)*'#',int(10 - (self.persent//10) ) * '_',self.__download_with_prograss(self.upload_speed))
 
     def Upload(self,path:str,mimtype = None):
         try:
