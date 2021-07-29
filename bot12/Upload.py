@@ -120,6 +120,10 @@ class Upload:
                     self.upload_speed = self.up//(time.perf_counter() - self.start_time)
                     size-=256*1024
                     # size=self.__download_with_prograss(size)
+                if self.cancel:
+                    self.complete = True
+                    self.address = path
+                    return
                 if status:
                     self.pre = r'%10d [%3.2f%%]' % (size,status.progress()*100)
 

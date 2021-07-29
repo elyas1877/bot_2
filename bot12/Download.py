@@ -1,4 +1,3 @@
-
 import User
 import os
 from socket import timeout
@@ -17,17 +16,19 @@ import bot
 from googleapiclient.discovery import build
 import random
 import math
+
 # import test_2
 # app = Client(api_id=5975714,session_name='BACK2gCuzoLPCD1cEBt8xlxdQ0RXnHHiQkzDFlCi_hGRTYJvGchW3jyVdqFQvpSsF4pCXa2UCEkXosrWmlbJ_uA2V-3bU5mM0ep5455ui_LDTxUQvCPdsscNrHNXWmV9XFrux4OSZtu-rcnsDcnZO3ZVmnTzyDd9cqGv00AqQ5xUUX1Q1J8BjDs825JMmohFjlOAJ6qA1Q0o-TtW2KLcQN8EC5w8naV1EA7ZvnG1WTcJdO-t8ILKrtQHMFdxNBlgQ76rQjv82O7kI99AMBWEUo3r_QkVIPr3sUyqKEsrgusm7Ef6g2OoDG6AaeiybU7pS0-sI3Tlv6fRbQ1lXYX8CH5EZ0EVuAA',api_hash='8d1ea6da21f3ddb0426938c3975fb0e7')
     # app.DOWNLOAD_WORKERS = 4
 # app.start()
 
 class Downloade:
-    def __init__(self,user:int,url :str,info:User):
+    def __init__(self,user:int,url :str,info:User,id:int):
         self.user = str(user)
         self.realpath = os.path.split(os.path.abspath(__file__))[0]
         self.status = None
         self.file_size = 0
+        self.download_id = id
         self.pre = None
         self.complete = False
         self.ready = False
@@ -130,7 +131,7 @@ class Downloade:
     @property
     def show(self) -> str:
 
-        return '{} : is {}\nsize : {}\n{}\n[{} {}]\nspeed :{} \n'.format(self.name,self.status,self.__download_with_prograss(self.file_size),self.pre,int(self.persent//10)*'#',int(10 - (self.persent//10) ) * '_',self.__download_with_prograss(self.download_speed))
+        return 'Name : {}\nStatus : {}\nsize : {}\n{}\n[{} {}]\nspeed :{} \n ID : {}\n'.format(self.name,self.status,self.__download_with_prograss(self.file_size),self.pre,int(self.persent//10)*'#',int(10 - (self.persent//10) ) * '_',self.__download_with_prograss(self.download_speed),self.download_id)
     
 
 
@@ -220,6 +221,9 @@ class Downloade:
                 if not buffer:
                     break
                 if self.cancel:
+                    f.close()
+                    r1.close()
+                    os.remove(f'{self.realpath}//{self.user}//{Download}//{fullname}')
                     break
                 self.dl_file_size += len(buffer)
                 # print(self.dl_file_size)
@@ -232,6 +236,10 @@ class Downloade:
                 # time.sleep(1)
                 # print(self.pre)
                 # print(self.show)
+            if self.cancel:
+                self.complete = True 
+                return
+
             self.complete = True 
             self.ready = True
             self.address = f'{self.realpath}//{self.user}//{Download}//{fullname}'
@@ -289,6 +297,14 @@ class Downloade:
         while (not handle.has_metadata()):
             time.sleep(1)
             counter+=1
+            if self.cancel:
+                try:
+                    ses.remove_torrent(handle)
+                except:
+                    pass
+                self.complete = True
+                return
+
             if counter == 120:
                 self.status = 'not working...'
                 try:
@@ -317,6 +333,12 @@ class Downloade:
                         # print ('%.2f%% complete (down: %.1f kb/s up: %.1f kB/s peers: %d) %s ' % \
                         #         (s.progress * 100, s.download_rate / 1000, s.upload_rate / 1000, \
                         #         s.num_peers, state_str[s.state]))
+                        if self.cancel:
+                            try:
+                                ses.remove_torrent(handle)
+                                break
+                            except:
+                                pass
                         self.status = state_str[s.state]
                         self.download_speed = s.download_rate
                         self.persent = float(s.progress * 100)
@@ -325,10 +347,28 @@ class Downloade:
                 except:
                     self.status = 'not working...'
                     ses.remove_torrent(handle)
-                    self.complete = True
+                    time.sleep(3)
+                    if os.path.isdir(f'{self.realpath}//{self.user}//Download//{self.name}'):
+                        shutil.rmtree(f'{self.realpath}//{self.user}//Download//{self.name}')
+                        self.complete = True
+                        print(1)
+                        return
                     # pass
                 # end = time.time()
                 # zer = '.zip'
+                if self.cancel:
+                    ses.remove_torrent(handle)
+                    time.sleep(3)
+                    if os.path.isdir(f'{self.realpath}//{self.user}//Download//{self.name}'):
+                        shutil.rmtree(f'{self.realpath}//{self.user}//Download//{self.name}')
+                        self.complete = True
+                        print(2)
+                        return
+                    else:
+                        os.remove(f'{self.realpath}//{self.user}//Download//{self.name}')
+                        self.complete = True
+                        return
+
                 time.sleep(5)
                 ses.remove_torrent(handle)
                 self.address = f'{self.realpath}//{self.user}//Download//{self.name}'

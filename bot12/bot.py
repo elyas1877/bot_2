@@ -63,7 +63,11 @@ class Bot:
         update.message.reply_text('Help!')
         # update.message.reply_text(update)
         # print(update)
-        print(update.message.reply_to_message)
+        # print(update.message.reply_to_message)
+        print(update.message.text.removeprefix('/help '))
+
+        print(update.message.message_id)
+
     
     def __info(self,id_):
         # ad = os.path.split(os.path.abspath(__file__))[0]
@@ -267,6 +271,21 @@ class Bot:
             return all([result.scheme, result.netloc])
         except:
             return False
+    def cancel(self, update: Update, context: CallbackContext) -> None:
+        id_ =  update.message.from_user.id
+        download_id = update.message.text.removeprefix('/cancel ')
+        user = None
+        for i in self.users:
+            if i.id == id_:
+                user = i
+                print(user.id)
+        if user is not None:
+            print(user.downloads)
+            user.cancel_download(int(download_id))
+            update.message.reply_text('canceled')
+        else:
+            update.message.reply_text('not canceled')
+
     
     def dele(self, update: Update, context: CallbackContext) -> None:
         id_ =  update.message.from_user.id
@@ -325,14 +344,15 @@ class Bot:
                 
                 
                 if user is None :
-                    user = User.User(id_,update.message.from_user.username)
+                    global loop
+                    user = User.User(loop,id_,update.message.from_user.username)
                     print('new user link append')
                     self.users.append(user)
-                    user.download(links)
+                    user.download(links,update.message.message_id)
                             
                 else:
                     print('old user link added download')
-                    user.download(links)
+                    user.download(links,update.message.message_id)
                 # else:
                 #     if user is None :
                 #         user = User.User(id_,update.message.from_user.username)
@@ -386,6 +406,7 @@ class Bot:
         dispatcher.add_handler(CommandHandler("down", self.down))
         dispatcher.add_handler(CommandHandler("del", self.dele))
         dispatcher.add_handler(CommandHandler("ls", self.ls))
+        dispatcher.add_handler(CommandHandler("cancel", self.cancel))
         # revoke
         # storage
         dispatcher.add_handler(CommandHandler("storage", self.storage))

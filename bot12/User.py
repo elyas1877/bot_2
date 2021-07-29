@@ -1,6 +1,7 @@
 # from bot12.Download import Downloade
 import os
 import pickle
+from re import T
 # from re import T
 import sys
 from googleapiclient.discovery import build
@@ -8,7 +9,7 @@ from googleapiclient.discovery import build
 # import Download
 from Download import Downloade
 import Upload
-# import asyncio
+import asyncio
 import bot
 import shutil
 # loope = asyncio.new_event_loop()
@@ -17,7 +18,7 @@ import shutil
 # threading.Thread(target=loope.run_forever,args=())
 # print('for ever')
 class User:
-    def __init__(self,id:int,user_name = None):
+    def __init__(self,loop,id:int,user_name = None):
         self.id = id
         self.paths = []
         self.uploads = None
@@ -25,7 +26,10 @@ class User:
         self.queue_links = []
         self.user_name = user_name
         self.passe = False
-        # self.loop = loop
+        # self.tg_download = []
+        self.tasks = []
+        # self.loo
+        self.loop = loop
 
     # def chek(self,size):
     #     if self.passe :
@@ -57,9 +61,9 @@ class User:
     #     # service = self.authorization().about().get(fields = 'storageQuota').execute()
         
         
-        # return int(li['storageQuota']['limit']) , int(li['storageQuota']['usage'])
-    def download(self,link):
-        self.queue_links.append(Downloade(self.id,link,self))
+    #     return int(li['storageQuota']['limit']) , int(li['storageQuota']['usage'])
+    def download(self,link,id):
+        self.queue_links.append(Downloade(self.id,link,self,id))
     
     
     
@@ -85,8 +89,12 @@ class User:
                     self.downloads.append(down)
                     print(self.downloads)
             else:
-                    bot.loop.create_task(down.tgdownload())
+                    # bot.loop.create_task()
+                    task = asyncio.ensure_future(down.tgdownload(),loop=self.loop)
                     self.downloads.append(down)
+                    # self.tg_download.append(down)
+                    self.tasks.append((task,down.download_id))
+
                 # pass
                     # await asyncio.ensure_future(down.tgdownload(),loop=loope)
                     # looper = False
@@ -111,6 +119,28 @@ class User:
     #     f1 = loop.create_task(down.tgdownload())
 
     #     await asyncio.wait([f1,])
+
+    def cancel_download(self,id:int):
+        down = None
+        print()
+        for i in self.downloads:
+            if i.download_id == id:
+                i.cancel = True
+                print('ca')
+                down = i
+                break
+
+        for j in self.tasks:
+            if j[1] == id:
+                j[0].cancel()
+                down.complete = True
+                print('eu')
+
+                return
+        # for i in self.downloads:
+        #     if i.download_id == id:
+        #         i.cancel = True
+        #         return
 
     def uploader(self):
         if self.uploads is None and len(self.paths) > 0:
