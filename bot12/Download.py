@@ -482,7 +482,9 @@ class Downloade:
             #     self.status = 'not working...'
             #     time.sleep(4000)
             #     self.tgdownload()
-            
+            if self.cancel:
+                self.complete = True
+                return
             self.mimtype=file_info.document.mime_type
             self.ready = True
             self.complete = True
