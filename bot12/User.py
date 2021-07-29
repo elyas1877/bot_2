@@ -126,7 +126,7 @@ class User:
         print()
         for i in self.downloads:
             if i.download_id == id:
-                time.sleep(4)
+                # time.sleep(4)
                 i.cancel = True
                 print('ca')
                 down = i
@@ -134,7 +134,7 @@ class User:
 
         for j in self.tasks:
             if j[1] == id:
-                time.sleep(4)
+                # time.sleep(4)
                 j[0].cancel()
                 down.complete = True
                 print('eu')
