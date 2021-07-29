@@ -11,6 +11,7 @@ from Download import Downloade
 import Upload
 import asyncio
 import bot
+import time
 import shutil
 # loope = asyncio.new_event_loop()
 # looper :bool = True
@@ -125,6 +126,7 @@ class User:
         print()
         for i in self.downloads:
             if i.download_id == id:
+                time.sleep(4)
                 i.cancel = True
                 print('ca')
                 down = i
@@ -132,10 +134,10 @@ class User:
 
         for j in self.tasks:
             if j[1] == id:
+                time.sleep(4)
                 j[0].cancel()
                 down.complete = True
                 print('eu')
-
                 return
         # for i in self.downloads:
         #     if i.download_id == id:

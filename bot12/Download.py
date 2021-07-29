@@ -37,6 +37,7 @@ class Downloade:
         self.start_time = None
         self.address = None
         self.cancel = False
+        self.task = None
         self.dl_file_size = 0
         self.download_speed = 0
         self.info_ = info
