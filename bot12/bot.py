@@ -272,7 +272,7 @@ class Bot:
         except:
             return False
 
-    def __extracer(text, prefix):
+    def __extracer(self,text, prefix):
 
         if text.startswith(prefix):
             return text[len(prefix):]
