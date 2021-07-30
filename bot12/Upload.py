@@ -18,6 +18,7 @@ class Upload:
         self.SCOPE = ['https://www.googleapis.com/auth/drive']
         self.size = 0  
         self.address = None
+        self.cancel = False
         self.status = None
         self.name = path.split('//')[-1]
         self.complete = False
