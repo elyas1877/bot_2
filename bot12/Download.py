@@ -102,7 +102,7 @@ class Downloade:
 
         for prossess in self.info_.downloads:
             print(self.info_.user_name)
-            if prossess.file_size == int(self.file_size):
+            if prossess.download_id == self.download_id:
                 continue
             on_prossess += prossess.file_size
         
@@ -315,8 +315,6 @@ class Downloade:
                 self.complete = True
                 return
         
-
-            
         print ('Got Metadata, Starting Torrent Download...')
         if handle.has_metadata():
             
@@ -456,6 +454,15 @@ class Downloade:
         #    app.start()
         #    app.send_message('me','hello')
         file_info = self.url[1]
+        if file_info.document is None:
+            self.name = file_info.video.file_name
+            self.file_size = int(file_info.video.file_size)
+            self.mimtype=file_info.video.mime_type
+        else:
+            self.name = file_info.document.file_name
+            self.file_size = int(file_info.document.file_size)
+            self.mimtype=file_info.document.mime_type
+
         # self.tgaccount.connect()
         # ()
         # user_bot.main(file_info.message_id)
@@ -464,8 +471,8 @@ class Downloade:
         # app.start()
         print('second')
         print(file_info.message_id)
-        self.name = file_info.document.file_name
-        self.file_size = int(file_info.document.file_size)
+        # self.name = file_info.document.file_name
+        # self.file_size = int(file_info.document.file_size)
         # print(file_info.document.file_size)
         # print(self.name)
         if self.chek():
@@ -495,7 +502,7 @@ class Downloade:
             if self.cancel:
                 self.complete = True
                 return
-            self.mimtype=file_info.document.mime_type
+            
             self.ready = True
             self.complete = True
             print('complete')

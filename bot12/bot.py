@@ -64,9 +64,10 @@ class Bot:
         # update.message.reply_text(update)
         # print(update)
         # print(update.message.reply_to_message)
-        print(update.message.text.removeprefix('/help '))
+        # print(update.message.text.removeprefix('/help '))
+        print(update.message.reply_to_message.video)
 
-        print(update.message.message_id)
+        # print(update.message.message_id)
 
     
     def __info(self,id_):
@@ -260,7 +261,8 @@ class Bot:
             # # print(text)
     def __file_validetor(self,update: Update):
         doc = update.message.reply_to_message.document
-        if doc is None:
+        doc1 = update.message.reply_to_message.video
+        if doc is None and doc1 is None:
             return False
         return True
 
@@ -271,7 +273,6 @@ class Bot:
             return all([result.scheme, result.netloc])
         except:
             return False
-
     def __extracer(self,text, prefix):
 
         if text.startswith(prefix):
@@ -325,7 +326,7 @@ class Bot:
             if self.__uri_validator(update.message.reply_to_message.text) or self.__file_validetor(update) or ('magnet' in link_text)  :
                 print('yes...')
             
-                link = update.message.reply_to_message.text
+                link = link_text
                 ducumet_tg = update.message.reply_to_message
                 print(link)
 
