@@ -485,7 +485,7 @@ class Downloade:
             try:
                 mess = await bot.tel.Client.get_messages(-1001172803610,file_info.message_id)
                 print(mess)
-                await bot.tel.Client.download_media(message=mess,file_name=self.address,progress=self.__progress,)
+                await bot.tel.Client.download_media(message=mess,file_name=self.address,progress=self.__progress, block=False)
             except:
                 self.complete = True
                 return
