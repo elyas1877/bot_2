@@ -10,7 +10,7 @@ def start() -> scoped_session:
     uri = os.getenv("DATABASE_URL")  # or other relevant config var
     if uri.startswith("postgres://"):
       uri = uri.replace("postgres://", "postgresql://", 1)
-      
+      #
     engine = create_engine(uri)
     BASE.metadata.bind = engine
     BASE.metadata.create_all(engine)

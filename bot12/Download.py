@@ -4,7 +4,7 @@ from socket import timeout
 # from re import T
 from urllib.request import urlopen , Request
 import urllib.error, urllib.parse
-import libtorrent as lt
+# import libtorrent as lt
 from pytube import YouTube
 import threading
 import time
@@ -17,6 +17,7 @@ from googleapiclient.discovery import build
 import random
 import math
 from DB import google_drive_DB
+import mimetypes
 
 # import test_2
 # app = Client(api_id=5975714,session_name='BACK2gCuzoLPCD1cEBt8xlxdQ0RXnHHiQkzDFlCi_hGRTYJvGchW3jyVdqFQvpSsF4pCXa2UCEkXosrWmlbJ_uA2V-3bU5mM0ep5455ui_LDTxUQvCPdsscNrHNXWmV9XFrux4OSZtu-rcnsDcnZO3ZVmnTzyDd9cqGv00AqQ5xUUX1Q1J8BjDs825JMmohFjlOAJ6qA1Q0o-TtW2KLcQN8EC5w8naV1EA7ZvnG1WTcJdO-t8ILKrtQHMFdxNBlgQ76rQjv82O7kI99AMBWEUo3r_QkVIPr3sUyqKEsrgusm7Ef6g2OoDG6AaeiybU7pS0-sI3Tlv6fRbQ1lXYX8CH5EZ0EVuAA',api_hash='8d1ea6da21f3ddb0426938c3975fb0e7')
@@ -459,9 +460,13 @@ class Downloade:
         #    app.send_message('me','hello')
         file_info = self.url[1]
         if file_info.document is None:
-            self.name = file_info.video.file_name
-            self.file_size = int(file_info.video.file_size)
             self.mimtype=file_info.video.mime_type
+            print(self.mimtype)
+            self.name = file_info.video.file_name
+            if self.name == None:
+
+                self.name = f'VID-{file_info.from_user.id}-{file_info.message_id}{mimetypes.guess_extension(self.mimtype)}'
+            self.file_size = int(file_info.video.file_size)
         else:
             self.name = file_info.document.file_name
             self.file_size = int(file_info.document.file_size)

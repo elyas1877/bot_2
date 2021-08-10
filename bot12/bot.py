@@ -59,7 +59,7 @@ class Bot:
         return "%s %s" % (s, size_name[i])
 
 
-    def help_command(self, update: Update, context: CallbackContext) -> None:
+    def inf(self, update: Update, context: CallbackContext) -> None:
         """Send a message when the command /help is issued."""
         if update.message.chat_id == self.chat_id:
 
@@ -449,6 +449,8 @@ class Bot:
         dispatcher.add_handler(CommandHandler("down", self.down))
         dispatcher.add_handler(CommandHandler("del", self.dele))
         dispatcher.add_handler(CommandHandler("ls", self.ls))
+        dispatcher.add_handler(CommandHandler("info", self.inf))
+
         dispatcher.add_handler(CommandHandler("cancel", self.cancel))
         # revoke
         # storage
