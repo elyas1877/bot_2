@@ -23,6 +23,7 @@ isort==5.6.4
 lazy-object-proxy==1.4.3
 loguru==0.5.3
 sqlalchemy
+psycopg2
 mccabe==0.6.1
 multidict==5.1.0
 oauthlib==3.1.0
