@@ -4,7 +4,7 @@ from socket import timeout
 # from re import T
 from urllib.request import urlopen , Request
 import urllib.error, urllib.parse
-import libtorrent as lt
+# import libtorrent as lt
 from pytube import YouTube
 import threading
 import time
@@ -16,6 +16,7 @@ import bot
 from googleapiclient.discovery import build
 import random
 import math
+from DB import google_drive_DB
 
 # import test_2
 # app = Client(api_id=5975714,session_name='BACK2gCuzoLPCD1cEBt8xlxdQ0RXnHHiQkzDFlCi_hGRTYJvGchW3jyVdqFQvpSsF4pCXa2UCEkXosrWmlbJ_uA2V-3bU5mM0ep5455ui_LDTxUQvCPdsscNrHNXWmV9XFrux4OSZtu-rcnsDcnZO3ZVmnTzyDd9cqGv00AqQ5xUUX1Q1J8BjDs825JMmohFjlOAJ6qA1Q0o-TtW2KLcQN8EC5w8naV1EA7ZvnG1WTcJdO-t8ILKrtQHMFdxNBlgQ76rQjv82O7kI99AMBWEUo3r_QkVIPr3sUyqKEsrgusm7Ef6g2OoDG6AaeiybU7pS0-sI3Tlv6fRbQ1lXYX8CH5EZ0EVuAA',api_hash='8d1ea6da21f3ddb0426938c3975fb0e7')
@@ -79,13 +80,16 @@ class Downloade:
 
     def info(self):
         # ad = os.path.split(os.path.abspath(__file__))[0]
-        print(f'{self.realpath}//{self.user}//auth//token.pickle')
-        if os.path.exists(f'{self.realpath}//{self.user}//auth//token.pickle'):
-            with open(f'{self.realpath}//{self.user}//auth//token.pickle', 'rb') as token:
-                creds = pickle.load(token)
+        # print(f'{self.realpath}//{self.user}//auth//token.pickle')
+        #os.path.exists(f'{self.realpath}//{self.user}//auth//token.pickle')
+        
+        if google_drive_DB._chek(int(self.user)):
+            # with open(f'{self.realpath}//{self.user}//auth//token.pickle', 'rb') as token:
+            #     creds = pickle.load(token)
+            creds = google_drive_DB.search(int(self.user))
             service = build('drive', 'v3', credentials=creds,cache_discovery=False)
             li = service.about().get(fields = 'storageQuota').execute()
-            token.close()
+            # token.close()
             return int(li['storageQuota']['limit']) , int(li['storageQuota']['usage'])
         else:
             return

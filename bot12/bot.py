@@ -1,4 +1,5 @@
 from __future__ import print_function
+from sqlalchemy.sql.expression import text
 # import re
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update 
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, CallbackContext,run_async
@@ -19,6 +20,7 @@ from google.oauth2 import service_account
 # from queue import Queue
 # from datetime import datetime
 # import Download
+from DB import google_drive_DB
 import threading
 import time
 import asyncio
@@ -59,112 +61,137 @@ class Bot:
 
     def help_command(self, update: Update, context: CallbackContext) -> None:
         """Send a message when the command /help is issued."""
+        if update.message.chat_id == self.chat_id:
 
-        update.message.reply_text('Help!')
-        # update.message.reply_text(update)
-        # print(update)
-        # print(update.message.reply_to_message)
-        # print(update.message.text.removeprefix('/help '))
-        print(update.message.reply_to_message.video)
+            text = ''
+            # update.message.reply_text(update)
+            # print(update)
+            # print(update.message.reply_to_message)
+            # print(update.message.text.removeprefix('/help '))
+            # print(google_drive_DB._get_add)
 
+            for i in google_drive_DB._get_add():
+                text += f'{i.name} , {i.chat_id}\n'
+
+
+            update.message.reply_text(text)
         # print(update.message.message_id)
+    def help_command(self, update: Update, context: CallbackContext) -> None:
 
+        update.message.reply_text(
+        '''
+/help for information
+/start to know is bot working?
+/auth for Authentication
+/revoke for delete your Authentication
+/down for downloading only telegram documents and videos , direct links , (magnet links) torrent , Youtube links
+/storage for know how much space do you have
+/cancel (download id)
+''')
     
     def __info(self,id_):
         # ad = os.path.split(os.path.abspath(__file__))[0]
-            if os.path.exists(f'{self.realpath1}//{id_}//auth//token.pickle'):
-                with open(f'{self.realpath1}//{id_}//auth//token.pickle', 'rb') as token:
-                    creds = pickle.load(token)
+            if Upload.check(id_):
+                # with open(f'{self.realpath1}//{id_}//auth//token.pickle', 'rb') as token:
+                #     creds = pickle.load(token)
+                    creds=google_drive_DB.search(id_)
             service = build('drive', 'v3', credentials=creds,cache_discovery=False)
             li = service.about().get(fields = 'storageQuota').execute()
             # service = self.authorization().about().get(fields = 'storageQuota').execute()
             return int(li['storageQuota']['limit']) , int(li['storageQuota']['usage'])
 
-
     def storage(self, update: Update, context: CallbackContext) -> None:
-        Id = update.message.from_user.id
-        if Upload.check(Id):
-            # user = User.User(Id)
-            limit , storage = self.__info(Id)
-            free = limit - storage
-            text = f'limit : {self.__download_with_prograss(limit)}\nstorage : {self.__download_with_prograss(storage)}\nfree : {self.__download_with_prograss(free)}'
-            update.message.reply_text(text)
-        else:
-            update.message.reply_text('First Auth !')
+        if update.message.chat_id == self.chat_id:
+            Id = update.message.from_user.id
+            if Upload.check(Id):
+                # user = User.User(Id)
+                limit , storage = self.__info(Id)
+                free = limit - storage
+                text = f'limit : {self.__download_with_prograss(limit)}\nstorage : {self.__download_with_prograss(storage)}\nfree : {self.__download_with_prograss(free)}'
+                update.message.reply_text(text)
+            else:
+                update.message.reply_text('First Auth !')
         # pass
     def revoke(self, update: Update, context: CallbackContext) -> None:
         # print(update.message.from_user.id)
-        Id = update.message.from_user.id
-        if Upload.check(Id):
-            try:
-                Upload.revoke(Id)
-                update.message.reply_text('revoked !')
-            except:
-                update.message.reply_text('not revoked !')
-        else:
-            update.message.reply_text('First Auth !')
+        if update.message.chat_id == self.chat_id:
+            Id = update.message.from_user.id
+            if Upload.check(Id):
+                try:
+                    # Upload.revoke(Id)
+                    google_drive_DB._clear(Id)
+                    update.message.reply_text('revoked !')
+                except:
+                    update.message.reply_text('not revoked !')
+            else:
+                update.message.reply_text('First Auth !')
         # pass
     def ls(self, update: Update, context: CallbackContext) -> None:
-        id_ = update.message.from_user.id
-        ad = f'{self.realpath1}//{str(id_)}//Download'
-        text =''
-        try:
-            onlyfiles = [f for f in os.listdir(ad) if os.path.isfile(os.path.join(ad, f))]
-            for i in onlyfiles:
-                text += i
-                text +='\n'
-        
-            update.message.reply_text(text)
-        except:
-            update.message.reply_text('no files in here')
+        if update.message.chat_id == self.chat_id:
+            id_ = update.message.from_user.id
+            ad = f'{self.realpath1}//{str(id_)}//Download'
+            text =''
+            try:
+                onlyfiles = [f for f in os.listdir(ad) if os.path.isfile(os.path.join(ad, f))]
+                for i in onlyfiles:
+                    text += i
+                    text +='\n'
+            
+                update.message.reply_text(text)
+            except:
+                update.message.reply_text('no files in here')
 
         
     def start(self, update: Update, context: CallbackContext) -> None:
-        update.message.reply_text('Start!')
-        print(update.message.chat_id)
-        print('\n',update.message.from_user.username)
-        print(self.users)
-        # while True :
-        #     print(1)
-        # update.message.reply_text
+        if update.message.chat_id == self.chat_id:
+            update.message.reply_text('Start!')
+            print(update.message.chat_id)
+            print('\n',update.message.from_user.username)
+            print(self.users)
+            # while True :
+            #     print(1)
+            # update.message.reply_text
     def send_auth(self, update: Update, context: CallbackContext) -> None:
+        if update.message.chat_id == self.chat_id:
         # print(update.message)
-        has : bool = True
-        auth = 'auth'
-        user_id = update.message.from_user.id
-        for users in self.list:
-            if users[0] == user_id:
+            has : bool = True
+            auth = 'auth'
+            user_id = update.message.from_user.id
+            for users in self.list:
+                if users[0] == user_id:
+                    has = False
+                    break
+            # os.path.exists(f'{self.realpath1}/{str(user_id)}/{auth}//token.pickle')
+            if google_drive_DB._chek(user_id):
                 has = False
-                break
-        if os.path.exists(f'{self.realpath1}/{str(user_id)}/{auth}//token.pickle'):
-            has = False
-            update.message.reply_text('Already Auth...!')
+                update.message.reply_text('Already Auth...!')
+                return
 
-        if has :
-            creds = None
-            if not creds or not creds.valid:
-                if creds and creds.expired and creds.refresh_token:
-                    creds.refresh(Request())
-                else:
-                    flow = InstalledAppFlow.from_client_secrets_file(
-                        f'{self.realpath1}//Elyas.json', self.SCOPE)
-                    # print(flow.authorization_url()[0])
-                    print('############################################')
-                    print(flow.return_url())
-                    print('############################################')
+            if has :
+                creds = None
+                if not creds or not creds.valid:
+                    if creds and creds.expired and creds.refresh_token:
+                        creds.refresh(Request())
+                    else:
+                        flow = InstalledAppFlow.from_client_secrets_file(
+                            f'{self.realpath1}//Elyas.json', self.SCOPE)
+                        # print(flow.authorization_url()[0])
+                        print('############################################')
+                        print(flow.return_url())
+                        print('############################################')
+                        
+                keyboard = [
                     
-            keyboard = [
-                
-                [InlineKeyboardButton("authorization", callback_data=update.message.from_user.id,url=flow.return_url())]
-            ]
+                    [InlineKeyboardButton("authorization", callback_data=update.message.from_user.id,url=flow.return_url())]
+                ]
 
-            reply_markup = InlineKeyboardMarkup(keyboard)
+                reply_markup = InlineKeyboardMarkup(keyboard)
 
-            update.message.reply_text('Send Me Code!:', reply_markup=reply_markup)
+                update.message.reply_text('Send Me Code!:', reply_markup=reply_markup)
 
-            self.list.append((update.message.from_user.id,flow))
+                self.list.append((update.message.from_user.id,flow))
+                print(self.list)
             print(self.list)
-        print(self.list)
     # def usersw(self):
     #         for u,i in enumerate(self.users):
     #             for k,j in enumerate(i.downloads) :
@@ -261,8 +288,8 @@ class Bot:
             # # print(text)
     def __file_validetor(self,update: Update):
         doc = update.message.reply_to_message.document
-        doc1 = update.message.reply_to_message.video
-        if doc is None and doc1 is None:
+        vid = update.message.reply_to_message.video
+        if doc is None and vid is None:
             return False
         return True
 
@@ -279,28 +306,30 @@ class Bot:
             return text[len(prefix):]
 
     def cancel(self, update: Update, context: CallbackContext) -> None:
-        id_ =  update.message.from_user.id
-        download_id = self.__extracer(update.message.text,'/cancel ')
-        user = None
-        for i in self.users:
-            if i.id == id_:
-                user = i
-                print(user.id)
-        if user is not None:
-            print(user.downloads)
-            user.cancel_download(int(download_id))
-            update.message.reply_text('canceled')
-        else:
-            update.message.reply_text('not canceled')
+        if update.message.chat_id == self.chat_id:
+            id_ =  update.message.from_user.id
+            download_id = self.__extracer(update.message.text,'/cancel ')
+            user = None
+            for i in self.users:
+                if i.id == id_:
+                    user = i
+                    print(user.id)
+            if user is not None:
+                print(user.downloads)
+                user.cancel_download(int(download_id))
+                update.message.reply_text('canceled')
+            else:
+                update.message.reply_text('not canceled')
 
     def dele(self, update: Update, context: CallbackContext) -> None:
-        id_ =  update.message.from_user.id
-        ad = f'{self.realpath1}//{str(id_)}//Download'
-        try:
-            shutil.rmtree(ad)
-            update.message.reply_text('removed...')
-        except:
-            update.message.reply_text('not removed...')
+        if update.message.chat_id == self.chat_id:
+            id_ =  update.message.from_user.id
+            ad = f'{self.realpath1}//{str(id_)}//Download'
+            try:
+                shutil.rmtree(ad)
+                update.message.reply_text('removed...')
+            except:
+                update.message.reply_text('not removed...')
         # user = None
         
         # for i in self.users:
@@ -314,94 +343,102 @@ class Bot:
         # update.message.reply_text('removed...')
 
     def down(self, update: Update, context: CallbackContext) -> None:
-        id_ =  update.message.from_user.id
-        link_text = update.message.reply_to_message.text
+        if update.message.chat_id == self.chat_id:
+            id_ =  update.message.from_user.id
+            link_text = update.message.reply_to_message.text
 
 
-        # duc_id = update.message.reply_to_message.document
-        if update.message.reply_to_message is None:
-            return
-                                                                                                                #todo
-        if Upload.check(id_):
-            if self.__uri_validator(update.message.reply_to_message.text) or self.__file_validetor(update) or ('magnet' in link_text)  :
-                print('yes...')
-            
-                link = link_text
-                ducumet_tg = update.message.reply_to_message
-                print(link)
-
-                # if ducumet_tg is None:
-                links = (link,ducumet_tg)
-                print('############################')
-                print(links[1])
-                print('############################')
-                user = None
-
-                try:
-                    context.bot.delete_message(chat_id=self.chat_id,message_id=self.download_status)
-                except:
-                        
-                    print('error!...')
-                self.download_status = update.message.reply_text('Downloading... !').message_id
-
-                for i in self.users:
-                    if i.id == id_:
-                        user = i
+            # duc_id = update.message.reply_to_message.document
+            if update.message.reply_to_message is None:
+                return
+                                                                                                                    #todo
+            if Upload.check(id_):
+                if self.__uri_validator(update.message.reply_to_message.text) or self.__file_validetor(update) or ('magnet' in link_text)  :
+                    print('yes...')
                 
-                
-                if user is None :
-                    global loop
-                    user = User.User(loop,id_,update.message.from_user.username)
-                    print('new user link append')
-                    self.users.append(user)
-                    user.download(links,update.message.message_id)
-                            
-                else:
-                    print('old user link added download')
-                    user.download(links,update.message.message_id)
-                # else:
-                #     if user is None :
-                #         user = User.User(id_,update.message.from_user.username)
-                #         print('new user tg append')
-                #         self.users.append(user)
-                #         user.tgdownloader()
-                #     else:
-                #         print('old user tg added download')
-                #         user.download(link)
+                    link = link_text
+                    ducumet_tg = update.message.reply_to_message
+                    print(link)
 
-                if self.threads is None:
+                    # if ducumet_tg is None:
+                    links = (link,ducumet_tg)
+                    print('############################')
+                    print(links[1])
+                    print('############################')
+                    user = None
+
                     try:
-                        self.threads = threading.Thread(target=self.auto_message,args=(update,context,))
-                        self.threads.start()
+                        context.bot.delete_message(chat_id=self.chat_id,message_id=self.download_status)
                     except:
-                        print('error...')
-        else:
-            update.message.reply_text('First Auth!')
+                            
+                        print('error!...')
+                    self.download_status = update.message.reply_text('Downloading... !').message_id
+
+                    for i in self.users:
+                        if i.id == id_:
+                            user = i
+                    
+                    
+                    if user is None :
+                        global loop
+                        user = User.User(loop,id_,update.message.from_user.username)
+                        print('new user link append')
+                        self.users.append(user)
+                        user.download(links,update.message.message_id)
+                                
+                    else:
+                        print('old user link added download')
+                        user.download(links,update.message.message_id)
+                    # else:
+                    #     if user is None :
+                    #         user = User.User(id_,update.message.from_user.username)
+                    #         print('new user tg append')
+                    #         self.users.append(user)
+                    #         user.tgdownloader()
+                    #     else:
+                    #         print('old user tg added download')
+                    #         user.download(link)
+
+                    if self.threads is None:
+                        try:
+                            self.threads = threading.Thread(target=self.auto_message,args=(update,context,))
+                            self.threads.start()
+                        except:
+                            print('error...')
+            else:
+                update.message.reply_text('First Auth!')
     
     def auth_get(self, update: Update, context: CallbackContext) -> None:
-        id_ =  update.message.from_user.id
-        auth = 'auth'
-        flow = None
-        print(self.list)
-        for cont,us in enumerate(self.list):
-            if us[0] == id_:
-                flow = us[1]
-                break
-        if not flow is None:    
-            query = update.message.text
-            try:
-                creds = flow.set_code(query)
-                print(query)
-                path1=os.path.join(os.path.dirname(sys.argv[0]),f'{id_}','auth')    
-                if not os.path.exists(path1):
-                    os.makedirs(path1)
-  
-                with open(f'{self.realpath1}/{str(id_)}/{auth}//token.pickle', 'wb') as token:
-                    pickle.dump(creds, token)
-                del self.list[cont]
-                print(self.list)
-            except :
-                update.message.reply_text('not Correct !')
+        if update.message.chat_id == self.chat_id:
+            id_ =  update.message.from_user.id
+            auth = 'auth'
+            flow = None
+            print(self.list)
+            for cont,us in enumerate(self.list):
+                if us[0] == id_:
+                    flow = us[1]
+                    break
+            if flow :    
+                query = update.message.text
+                try:
+                    creds = flow.set_code(query)
+                    print(query)
+                    # print(-1)
+                    # print(query)
+                    # print(0)
+                    # path1=os.path.join(os.path.dirname(sys.argv[0]),f'{id_}','auth')    
+                    # if not os.path.exists(path1):
+                    #     os.makedirs(path1)
+    
+                    # with open(f'{self.realpath1}/{str(id_)}/{auth}//token.pickle', 'wb') as token:
+                    #     pickle.dump(creds, token)
+                    print(1)
+                    google_drive_DB._set(id_,creds,update.message.from_user.username)
+                    print(2)
+                    del self.list[cont]
+                    print(self.list)
+                except :
+                    update.message.reply_text('not Correct !')
 
     def starter(self):
         updater = Updater(self.TOKEN)

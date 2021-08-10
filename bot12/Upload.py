@@ -8,6 +8,7 @@ from google.auth.transport.requests import Request
 from googleapiclient.errors import HttpError
 import os,sys
 import magic
+from DB import google_drive_DB
 import threading
 import math
 import time
@@ -44,12 +45,13 @@ class Upload:
 
     def authorization(self):
         try:
-            creds = None
-            auth = 'auth'
-            print(self.realpath1)
-            if os.path.exists(f'{self.realpath1}//{str(self.id)}//{auth}//token.pickle'):
-                with open(f'{self.realpath1}//{str(self.id)}//{auth}//token.pickle', 'rb') as token:
-                    creds = pickle.load(token)
+            # creds = None
+            # auth = 'auth'
+            # print(self.realpath1)
+            # if os.path.exists(f'{self.realpath1}//{str(self.id)}//{auth}//token.pickle'):
+            #     with open(f'{self.realpath1}//{str(self.id)}//{auth}//token.pickle', 'rb') as token:
+            #         creds = pickle.load(token)
+            creds = google_drive_DB.search(self.id)
         except:
             print('not auth!')
             return None
@@ -59,19 +61,18 @@ class Upload:
 
     @staticmethod
     def check(id) -> bool:
-        ad = os.path.split(os.path.abspath(__file__))[0]
-        if os.path.exists(f'{ad}//{str(id)}//auth//token.pickle'):
+        # ad = os.path.split(os.path.abspath(__file__))[0]
+        if google_drive_DB._chek(id):
             return True
-
         return False
 
-    @staticmethod
-    def revoke(id):
-        try:
-            ad = os.path.split(os.path.abspath(__file__))[0]
-            os.remove(f'{ad}//{str(id)}//auth//token.pickle')
-        except:
-            pass
+    # @staticmethod
+    # def revoke(id):
+    #     try:
+    #         ad = os.path.split(os.path.abspath(__file__))[0]
+    #         os.remove(f'{ad}//{str(id)}//auth//token.pickle')
+    #     except:
+    #         pass
 
     @property
     def show(self) -> str:
