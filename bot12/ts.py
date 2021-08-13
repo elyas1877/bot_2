@@ -2,6 +2,7 @@ import os,sys
 import shutil
 from urllib.request import urlopen
 from pytube import YouTube
+import mimetypes
 # print(os.path.dirname(sys.argv[0]).replace('/','\\'))
 # # wd = os.getcwd()
 # os.path.split(os.path.abspath(__file__))[0]
@@ -12,7 +13,9 @@ from pytube import YouTube
 # el = '/help 123'.removeprefix('/help ')
 # print(el)
 yt = YouTube('https://www.youtube.com/watch?v=KHnX8ItCZL4&pp=sAQA')
-print(yt.views)
+stream = yt.streams.get_highest_resolution()
+name = yt.title
+print(name,mimetypes.guess_extension(stream.mime_type))
 # # print(yt.views)
 # # for i in range(8):
 # #     if i == 4:

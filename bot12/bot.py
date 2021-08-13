@@ -300,15 +300,12 @@ class Bot:
             return all([result.scheme, result.netloc])
         except:
             return False
-    def __extracer(self,text, prefix):
-
-        if text.startswith(prefix):
-            return text[len(prefix):]
 
     def cancel(self, update: Update, context: CallbackContext) -> None:
         if update.message.chat_id == self.chat_id:
             id_ =  update.message.from_user.id
-            download_id = self.__extracer(update.message.text,'/cancel ')
+            download_id = context.args[0]
+            # print(download_id)
             user = None
             for i in self.users:
                 if i.id == id_:

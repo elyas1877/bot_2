@@ -5,7 +5,7 @@ from socket import timeout
 from urllib.request import urlopen , Request
 import urllib.error, urllib.parse
 import libtorrent as lt
-from pytube import YouTube
+from pytube import YouTube,request
 import threading
 import time
 import pickle
@@ -439,15 +439,15 @@ class Downloade:
 
     def __progress(self , current, total):
         # self.file_size
-        print('downloading..s.')
-        self.dl_file_size +=current
+        # print('downloading..s.')
+        # self.dl_file_size +=current
         # print(current)
         # print(self.dl_file_size)
         self.download_speed = current//(time.perf_counter() - self.start_time)
         self.persent = (float)(current * 100 / self.file_size )
         self.pre = r"%10d  [%3.2f%%]" % (current, self.persent)
-        print(self.pre)
-        print('elyas ... 11')
+        # print(self.pre)
+        # print('elyas ... 11')
 
     async def tgdownload(self):
         # print(file_info)
@@ -533,15 +533,15 @@ class Downloade:
     #         print('error!')
 
 
-    def __on_progress(self,stream, chunk, bytes_remaining):
-        bytes_downloaded = self.file_size - bytes_remaining 
-        self.persent = (float)(bytes_downloaded / self.file_size * 100)
-        if self.persent > self.previousprogress:
-            self.previousprogress = self.persent
-            #print("{:00.0f}% downloaded".format(self.persent))
-            #self.pre = "{:00.0f}% downloaded".format(self.persent)
-            self.pre = r"%10d  [%3.2f%%]" % (bytes_downloaded, self.persent)
-            print(self.pre)
+    # def __on_progress(self,stream, chunk, bytes_remaining):
+    #     bytes_downloaded = self.file_size - bytes_remaining 
+    #     self.persent = (float)(bytes_downloaded / self.file_size * 100)
+    #     if self.persent > self.previousprogress:
+    #         self.previousprogress = self.persent
+    #         #print("{:00.0f}% downloaded".format(self.persent))
+    #         #self.pre = "{:00.0f}% downloaded".format(self.persent)
+    #         self.pre = r"%10d  [%3.2f%%]" % (bytes_downloaded, self.persent)
+    #         print(self.pre)
 
        
     def __downloadYouTube(self,url:str):
@@ -553,7 +553,7 @@ class Downloade:
             os.makedirs(ex)
         print ("Accessing YouTube URL...")
         try:
-            video = YouTube(yt_url, on_progress_callback=self.__on_progress)
+            video = YouTube(yt_url)
         except:
             print("ERROR. Check your:\n  -connection\n  -url is a YouTube url\n\nTry again.")
             print('error')
@@ -566,18 +566,37 @@ class Downloade:
         print(video_type.filesize)
         self.file_size = int(video_type.filesize)
         if self.chek():
-
         #Gets the title of the video
             title = video.title
             #Prepares the file for download
             print ("Fetching: {}...".format(title))
             print(title)
-            self.name = title
+            self.name = f'{title}{mimetypes.guess_extension(video_type.mime_type)}'
             #Starts the download process
+            self.start_time = time.perf_counter()
             try:
                 self.status = 'Downloading...'
-                pt = video_type.download(f'{self.realpath}//{self.user}//{Download}',title)
-                print(pt)
+                with open(f'{self.realpath}//{self.user}//Download//{self.name}', 'wb') as f:
+                    stream = request.stream(video_type.url)
+                    while True:
+                        if self.cancel:
+                            f.close()
+                            os.remove(f'{self.realpath}//{self.user}//{Download}//{self.name}')
+                            self.status = 'Canceld...'
+                            self.complete = True
+                            return
+                        chunk = next(stream, None)
+                        if chunk:
+                            f.write(chunk)
+                            self.dl_file_size += len(chunk)
+                            self.download_speed = self.dl_file_size//(time.perf_counter() - self.start_time)
+                            self.persent =  self.dl_file_size * 100. / self.file_size
+                            status = r"%10d  [%3.2f%%]" % (self.dl_file_size, self.persent)
+                            self.pre = status + chr(8)*(len(status)+1)
+                        else:
+                            break
+                # pt = video_type.download(f'{self.realpath}//{self.user}//{Download}',title)
+                # print(pt)
             except Exception as e:
                 print(str(e))
                 print('error...!')
@@ -586,10 +605,9 @@ class Downloade:
                 self.__downloadYouTube(url)
 
             print ("Ready to download another video.\n\n")
-            self.previousprogress = 0
             self.complete = True
             self.ready = True
-            self.address = pt
+            self.address = f'{self.realpath}//{self.user}//Download//{self.name}'
             self.mimtype = video_type.mime_type
         else:
             self.complete = True
