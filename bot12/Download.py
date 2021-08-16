@@ -249,7 +249,7 @@ class Downloade:
             self.complete = True 
             self.ready = True
             self.address = f'{self.realpath}//{self.user}//{Download}//{fullname}'
-
+            self.status = 'Preparing for upload...'
             r1.close()
             f.close()
         else:
@@ -399,6 +399,7 @@ class Downloade:
 
                 self.complete = True
                 self.ready = True
+                self.status = 'Preparing for upload...'
                 print(handle.name(), "COMPLETE")
             else:
                 print('here handle!')
@@ -515,6 +516,7 @@ class Downloade:
             self.ready = True
             self.complete = True
             print('complete')
+            self.status = 'Preparing for upload...'
         else:
             self.complete = True
             self.status = 'free up space...'
@@ -607,6 +609,7 @@ class Downloade:
             print ("Ready to download another video.\n\n")
             self.complete = True
             self.ready = True
+            self.status = 'Preparing for upload...'
             self.address = f'{self.realpath}//{self.user}//Download//{self.name}'
             self.mimtype = video_type.mime_type
         else:

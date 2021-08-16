@@ -105,6 +105,7 @@ class Upload:
             return
         if self.size > 50 * 1024 * 1024:
             self.chunk = 50 * 1024 * 1024
+        self.status = 'Preparing for upload...'
         media = MediaFileUpload(path,
                                 resumable=True, 
                                 mimetype='image/jpeg',
