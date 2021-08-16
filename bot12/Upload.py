@@ -31,7 +31,7 @@ class Upload:
         self.persent = 0
         self.start_time = None
         self.up =0
-
+        self.chunk = 0
     def __download_with_prograss(self,file_size: int):
         if file_size == 0:
             return "0B"
@@ -87,6 +87,7 @@ class Upload:
         
         self.size = size
         name = self.name
+        self.chunk = 256*1024
         print(name)
         if mimtype is None:
             mime = magic.Magic(mime=True)
@@ -102,10 +103,12 @@ class Upload:
         drive_service = self.authorization()
         if drive_service is None:
             return
+        if self.size > 50 * 1024 * 1024:
+            self.chunk = 50 * 1024 * 1024
         media = MediaFileUpload(path,
                                 resumable=True, 
                                 mimetype='image/jpeg',
-                                chunksize=256*1024)
+                                chunksize=self.chunk)
             
         file = drive_service.files().create(supportsTeamDrives=True,body=file_metadata,media_body=media)
         resp = None
@@ -117,10 +120,10 @@ class Upload:
         while resp is None:
             try:
                 status, resp = file.next_chunk()
-                if(size>=256*1024):
-                    self.up +=256*1024
+                if(size>=self.chunk):
+                    self.up +=self.chunk
                     self.upload_speed = self.up//(time.perf_counter() - self.start_time)
-                    size-=256*1024
+                    size-=self.chunk
                     # size=self.__download_with_prograss(size)
                 if self.cancel:
                     self.complete = True
