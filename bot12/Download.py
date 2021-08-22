@@ -311,7 +311,7 @@ class Downloade:
                 self.complete = True
                 return
 
-            if counter == 120:
+            if counter == 1200:
                 self.status = 'not working...'
                 try:
                     ses.remove_torrent(handle)
