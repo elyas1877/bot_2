@@ -1,18 +1,12 @@
-# from bot12.Download import Downloade
 import os
-import pickle
-from re import T
-# from re import T
-import sys
 from googleapiclient.discovery import build
 # import threading
 # import Download
 from Download import Downloade
 import Upload
 import asyncio
-import bot
-import time
 import shutil
+import re
 # loope = asyncio.new_event_loop()
 # looper :bool = True
 # print('run')
@@ -31,7 +25,6 @@ class User:
         self.tasks = []
         # self.loo
         self.loop = loop
-
     # def chek(self,size):
     #     if self.passe :
     #         return True
@@ -50,8 +43,29 @@ class User:
     #         print('size : ',al)
     #         return True
     #     return False
+    def __youtube_url_validation(self,url):
+        youtube_regex = (
+            r'(https?://)?(www\.)?'
+            '(youtube|youtu)\.(com|be)/'
+            '(watch\?v=|embed/|v/|.+\?v=)?([^&=%\?]{11})')
 
+        youtube_regex_match = re.match(youtube_regex, url)
+        if youtube_regex_match:
+            return youtube_regex_match
 
+        return youtube_regex_match
+    def __is_youtubelink(self,url):
+        m = self.__youtube_url_validation(url)
+        if m:
+            return True
+        return False
+
+    def __is_magnet(self,url: str):
+        MAGNET_REGEX = r"magnet:\?xt=urn:btih:[a-zA-Z0-9]*"
+        magnet = re.findall(MAGNET_REGEX, url)
+        if magnet:
+            return True
+        return False
     # def info(self):
     #     ad = os.path.split(os.path.abspath(__file__))[0]
     #     if os.path.exists(f'{ad}//{str(self.id)}//auth//token.pickle'):
@@ -76,11 +90,16 @@ class User:
             # if self.chek(down.file_size):
             #     print(down.founder())
             if down.founder():
-                if 'youtube' in down.url[0] or 'youtu' in down.url[0]:
+                #'youtube' in down.url[0] or 'youtu' in down.url[0]
+                # self.__youtube_url_validation()
+                if self.__is_youtubelink(down.url[0]):
                     down.yt_starter()
+                    print('youtube')
                     self.downloads.append(down)
-                        
-                elif 'magnet' in down.url[0]:
+                    #'magnet' in down.url[0]
+                elif self.__is_magnet(down.url[0]):
+                    print('magnet')
+
                     down.tor_starter()
                     self.downloads.append(down)
                     self.passe = True

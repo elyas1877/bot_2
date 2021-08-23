@@ -32,6 +32,7 @@ class Upload:
         self.start_time = None
         self.up =0
         self.chunk = 0
+        self.folder_id = None
     def __download_with_prograss(self,file_size: int):
         if file_size == 0:
             return "0B"
@@ -57,8 +58,6 @@ class Upload:
             return None
         return build('drive', 'v3', credentials=creds,cache_discovery=False)
 
-
-
     @staticmethod
     def check(id) -> bool:
         # ad = os.path.split(os.path.abspath(__file__))[0]
@@ -66,6 +65,29 @@ class Upload:
             return True
         return False
 
+    def __validation(self):
+        serv = self.authorization()
+        page_token = None
+        while True:
+            response = serv.files().list(q="mimeType='application/vnd.google-apps.folder' and name = 'Downloads'",
+                                                spaces='drive',
+                                                fields='nextPageToken, files(id, name)',
+                                                pageToken=page_token).execute()
+            for file in response.get('files', []):
+                # Process change
+                # print ('Found file: %s (%s)' % (file.get('name'), file.get('id')))
+                return file.get('id')
+            page_token = response.get('nextPageToken', None)
+            if page_token is None:
+                break
+        file_metadata = {
+        'name': 'Downloads',
+        'mimeType': 'application/vnd.google-apps.folder'
+    }
+        file = serv.files().create(body=file_metadata,
+                                            fields='id').execute()
+        print ('Folder ID: %s' % file.get('id'))
+        return file.get('id')
     # @staticmethod
     # def revoke(id):
     #     try:
@@ -80,6 +102,8 @@ class Upload:
         return 'Name : {}\nStatus : {}\nsize : {}\n{}\n[{} {}]\nspeed: {}\n'.format(self.name,self.status,self.__download_with_prograss(self.size),self.pre,int(self.persent//10)*'#',int(10 - (self.persent//10) ) * '_',self.__download_with_prograss(self.upload_speed))
 
     def Upload(self,path:str,mimtype = None):
+        self.folder_id = self.__validation()
+        print(self.folder_id)
         try:
             size :int = os.path.getsize(path)
         except:
@@ -93,11 +117,11 @@ class Upload:
             mime = magic.Magic(mime=True)
 
             if(size>0):
-                file_metadata = {'name': name ,'mimeType': f'{mime.from_file(path)}'}
+                file_metadata = {'name': name, 'parents': [self.folder_id] ,'mimeType': f'{mime.from_file(path)}'}
             print('File Is None!')
         else:
             if(size>0):
-                file_metadata = {'name': name ,'mimeType': mimtype}
+                file_metadata = {'name': name,'parents': [self.folder_id] ,'mimeType': mimtype}
             print('File Is None!')
 
         drive_service = self.authorization()
