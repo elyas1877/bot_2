@@ -427,8 +427,12 @@ class Bot:
 
                     if self.__is_youtubelink(link_text):
                         keyboard = []
-                        yt = YouTube(link_text)
-                        stream = yt.streams
+                        try:
+                            yt = YouTube(link_text)
+                            stream = yt.streams
+                        except:
+                            context.bot.send_message(self.chat_id,'try again !')
+                            return
                         for i in stream:
                             if i.resolution and i.abr:
                                 # print(i.resolution ,i.abr , i.filesize)

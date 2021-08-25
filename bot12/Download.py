@@ -564,12 +564,16 @@ class Downloade:
             return
 #  video_type
         #Get the first video type - usually the best quality.
-        strm = video.streams
+        try:
+            strm = video.streams
+        except:
+            self.status = 'not working...'
+            self.complete = True
+            return
         tag = int(self.url[1])
         for i in strm:
             if  tag == i.itag:
                 video_type = i
-        
         title = video.title
         self.name = f'{title}{mimetypes.guess_extension(video_type.mime_type)}'
         print(self.name)
