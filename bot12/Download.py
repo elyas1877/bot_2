@@ -5,7 +5,7 @@ from socket import timeout
 from urllib.request import urlopen , Request
 import urllib.error, urllib.parse
 import libtorrent as lt
-from pytube import YouTube,request
+from pytube import YouTube,request,streams
 import threading
 import time
 import pickle
@@ -562,18 +562,26 @@ class Downloade:
             self.status = 'not working...'
             self.complete = True
             return
- 
+#  video_type
         #Get the first video type - usually the best quality.
-        video_type = video.streams.get_highest_resolution()
+        strm = video.streams
+        tag = int(self.url[1])
+        for i in strm:
+            if  tag == i.itag:
+                video_type = i
+        
+        title = video.title
+        self.name = f'{title}{mimetypes.guess_extension(video_type.mime_type)}'
+        print(self.name)
         print(video_type.filesize)
         self.file_size = int(video_type.filesize)
         if self.chek():
+            print(self.download_id)
         #Gets the title of the video
-            title = video.title
+            # title = video.title
             #Prepares the file for download
             print ("Fetching: {}...".format(title))
             print(title)
-            self.name = f'{title}{mimetypes.guess_extension(video_type.mime_type)}'
             #Starts the download process
             self.start_time = time.perf_counter()
             try:

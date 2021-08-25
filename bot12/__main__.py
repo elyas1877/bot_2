@@ -3,10 +3,11 @@
 # # from telephon_class import phon
 import bot
 import threading
+import os
 # import asyncio
 
 def main():
-    bot1 = bot.Bot('225268369:AAGdzjNI9jWrRCz0-7fxXA9nbqAZ4XPo_3k')
+    bot1 = bot.Bot(os.getenv('bot_token'))
         # bot.starter()
     # bot.
     threading.Thread(target=bot1.starter).start()

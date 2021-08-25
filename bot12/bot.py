@@ -1,13 +1,13 @@
 from __future__ import print_function
 from sqlalchemy.sql.expression import text
-# import re
+import re
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update 
-from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, CallbackContext,run_async
+from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, CallbackContext
 import logging
-from telegram import Update
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
 import sys,os
 import pickle
+from pytube import YouTube
 from googleapiclient.http import MediaFileUpload
 # from pytube import YouTube
 from googleapiclient.discovery import build
@@ -317,7 +317,68 @@ class Bot:
                 update.message.reply_text('canceled')
             else:
                 update.message.reply_text('not canceled')
+    def button(self,update: Update, context: CallbackContext) -> None:
+        query = update.callback_query
+        # query.from_user.id
+        print(query)
+        lsst = query.data.split(',')
+        id_ = int(lsst[2])
+        links = (lsst[0],lsst[1])
+        print(lsst)
+        print(links)
+        print(query.from_user.username)
+        Id = query.from_user.id
+        # print(type(Id))
+        if Upload.check(Id):
+            # context.bot.send_message(self.chat_id,'First auth')
+            if id_ == Id:
+                user = None
+                try:
+                    context.bot.delete_message(chat_id=self.chat_id,message_id=self.download_status)
+                except:
+                                
+                    print('error!...')
+                self.download_status = context.bot.send_message(self.chat_id,'Downloading... !').message_id
 
+                for i in self.users:
+                    if i.id == id_:
+                        user = i
+                
+                if user is None :
+                    global loop
+                    user = User.User(loop,id_,query.from_user.username)
+                    print('new user link append')
+                    self.users.append(user)
+                    user.download(links,query.message.message_id)
+                    try:
+                        context.bot.delete_message(self.chat_id,query.message.message_id)
+                    except:
+                        pass           
+                else:
+                    print('old user link added download')
+                    user.download(links,query.message.message_id)
+                    try:
+                        context.bot.delete_message(self.chat_id,query.message.message_id)
+                    except:
+                        pass
+                        
+                query.answer()
+
+                if self.threads is None:
+                    try:
+                        self.threads = threading.Thread(target=self.auto_message,args=(update,context,))
+                        self.threads.start()
+                    except:
+                        print('error...')
+            else:
+                try:
+                    context.bot.send_message(self.chat_id,'it\'s not yours !')
+                except:
+                    time.sleep(2)
+                    context.bot.send_message(self.chat_id,'it\'s not yours !')
+        else:
+            context.bot.send_message(self.chat_id,' First Auth !')
+        pass
     def dele(self, update: Update, context: CallbackContext) -> None:
         if update.message.chat_id == self.chat_id:
             id_ =  update.message.from_user.id
@@ -338,21 +399,53 @@ class Bot:
         # else:
         #     self.users.remove(user)
         # update.message.reply_text('removed...')
+    def __youtube_url_validation(self,url):
+        youtube_regex = (
+            r'(https?://)?(www\.)?'
+            '(youtube|youtu)\.(com|be)/'
+            '(watch\?v=|embed/|v/|.+\?v=)?([^&=%\?]{11})')
 
+        youtube_regex_match = re.match(youtube_regex, url)
+        if youtube_regex_match:
+            return youtube_regex_match
+
+        return youtube_regex_match
+    def __is_youtubelink(self,url):
+        m = self.__youtube_url_validation(url)
+        if m:
+            return True
+        return False
     def down(self, update: Update, context: CallbackContext) -> None:
         if update.message.chat_id == self.chat_id:
-            id_ =  update.message.from_user.id
-            link_text = update.message.reply_to_message.text
-
-
-            # duc_id = update.message.reply_to_message.document
             if update.message.reply_to_message is None:
                 return
-                                                                                                                    #todo
+            id_ =  update.message.from_user.id
+            link_text = update.message.reply_to_message.text
+            # tx = update.message.reply_to_message.text
             if Upload.check(id_):
+
+                if self.__is_youtubelink(link_text):
+                    keyboard = []
+                    yt = YouTube(link_text)
+                    stream = yt.streams
+                    for i in stream:
+                        if i.resolution and i.abr:
+                            # print(i.resolution ,i.abr , i.filesize)
+                            keyboard.append( [InlineKeyboardButton(f"Video 🎬 : {i.resolution} | size : {self.__download_with_prograss(i.filesize)}", callback_data=f'{link_text},{i.itag},{id_}')])
+                        if  i.abr and i.resolution is None :
+                            # print(i.abr , i.filesize)
+                            keyboard.append( [InlineKeyboardButton(f"Audio 🎧 : {i.abr} | size : {self.__download_with_prograss(i.filesize)}", callback_data=f'{link_text},{i.itag},{id_}')])
+                    reply_markup = InlineKeyboardMarkup(keyboard)
+                    update.message.reply_text(text=link_text , reply_markup=reply_markup)
+                    return
+            # duc_id = update.message.reply_to_message.document
+
+                                                                                                                    #todo
+            
                 if self.__uri_validator(update.message.reply_to_message.text) or self.__file_validetor(update) or ('magnet' in link_text)  :
                     print('yes...')
-                
+
+                        
                     link = link_text
                     ducumet_tg = update.message.reply_to_message
                     print(link)
@@ -447,7 +540,7 @@ class Bot:
         dispatcher.add_handler(CommandHandler("del", self.dele))
         dispatcher.add_handler(CommandHandler("ls", self.ls))
         dispatcher.add_handler(CommandHandler("info", self.inf))
-
+        dispatcher.add_handler(CallbackQueryHandler(self.button))
         dispatcher.add_handler(CommandHandler("cancel", self.cancel))
         # revoke
         # storage
@@ -459,9 +552,9 @@ class Bot:
 class user_bot:
     def __init__(self,loop) -> None:
         # pass
-        self.api_id = 5975714
-        self.api_hash = '8d1ea6da21f3ddb0426938c3975fb0e7'
-        self.session_name = 'BACK2gCuzoLPCD1cEBt8xlxdQ0RXnHHiQkzDFlCi_hGRTYJvGchW3jyVdqFQvpSsF4pCXa2UCEkXosrWmlbJ_uA2V-3bU5mM0ep5455ui_LDTxUQvCPdsscNrHNXWmV9XFrux4OSZtu-rcnsDcnZO3ZVmnTzyDd9cqGv00AqQ5xUUX1Q1J8BjDs825JMmohFjlOAJ6qA1Q0o-TtW2KLcQN8EC5w8naV1EA7ZvnG1WTcJdO-t8ILKrtQHMFdxNBlgQ76rQjv82O7kI99AMBWEUo3r_QkVIPr3sUyqKEsrgusm7Ef6g2OoDG6AaeiybU7pS0-sI3Tlv6fRbQ1lXYX8CH5EZ0EVuAA'
+        self.api_id = os.getenv('api_id')
+        self.api_hash = os.getenv('api_hash')
+        self.session_name = os.getenv('session')
         self.workers = 2
         # self.workdir = 'session/'
         self.chat_id=-1001172803610
