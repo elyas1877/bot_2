@@ -615,8 +615,10 @@ class Downloade:
                 print(str(e))
                 print('error...!')
                 self.status = 'not working...'
-                time.sleep(4000)
-                self.__downloadYouTube(url)
+                self.complete = True
+                # time.sleep(4000)
+                return
+                # self.__downloadYouTube(url)
 
             print ("Ready to download another video.\n\n")
             self.complete = True
