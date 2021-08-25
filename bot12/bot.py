@@ -423,24 +423,27 @@ class Bot:
             link_text = update.message.reply_to_message.text
             # tx = update.message.reply_to_message.text
             if Upload.check(id_):
+                try:
 
-                if self.__is_youtubelink(link_text):
-                    keyboard = []
-                    yt = YouTube(link_text)
-                    stream = yt.streams
-                    for i in stream:
-                        if i.resolution and i.abr:
-                            # print(i.resolution ,i.abr , i.filesize)
-                            keyboard.append( [InlineKeyboardButton(f"Video 🎬 : {i.resolution} | size : {self.__download_with_prograss(i.filesize)}", callback_data=f'{link_text},{i.itag},{id_}')])
-                        if  i.abr and i.resolution is None :
-                            # print(i.abr , i.filesize)
-                            keyboard.append( [InlineKeyboardButton(f"Audio 🎧 : {i.abr} | size : {self.__download_with_prograss(i.filesize)}", callback_data=f'{link_text},{i.itag},{id_}')])
-                    reply_markup = InlineKeyboardMarkup(keyboard)
-                    update.message.reply_text(text=link_text , reply_markup=reply_markup)
-                    return
+                    if self.__is_youtubelink(link_text):
+                        keyboard = []
+                        yt = YouTube(link_text)
+                        stream = yt.streams
+                        for i in stream:
+                            if i.resolution and i.abr:
+                                # print(i.resolution ,i.abr , i.filesize)
+                                keyboard.append( [InlineKeyboardButton(f"Video 🎬 : {i.resolution} | size : {self.__download_with_prograss(i.filesize)}", callback_data=f'{link_text},{i.itag},{id_}')])
+                            if  i.abr and i.resolution is None :
+                                # print(i.abr , i.filesize)
+                                keyboard.append( [InlineKeyboardButton(f"Audio 🎧 : {i.abr} | size : {self.__download_with_prograss(i.filesize)}", callback_data=f'{link_text},{i.itag},{id_}')])
+                        reply_markup = InlineKeyboardMarkup(keyboard)
+                        update.message.reply_text(text=link_text , reply_markup=reply_markup)
+                        return
+                except:
+                    pass
             # duc_id = update.message.reply_to_message.document
 
-                                                                                                                    #todo
+            #todo
             
                 if self.__uri_validator(update.message.reply_to_message.text) or self.__file_validetor(update) or ('magnet' in link_text)  :
                     print('yes...')
