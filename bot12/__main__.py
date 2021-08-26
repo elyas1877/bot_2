@@ -5,10 +5,10 @@ import bot
 import threading
 import os
 # import asyncio
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 
 def main():
-    load_dotenv()
+    # load_dotenv()
     bot1 = bot.Bot(os.getenv('bot_token'))
         # bot.starter()
     # bot.

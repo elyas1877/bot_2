@@ -16,6 +16,7 @@ from pytube import YouTube,streams,request
 yt = YouTube('https://youtu.be/vKYF84UXQGI')
 stream = yt.streams.get_highest_resolution()
 name = stream.default_filename
+filename_prefix = stream.filename_prefix
 print(name)
 # with open('C:\\Users\\Elyas\\Documents\\1.mp4', 'wb') as f:
 #     stream = request.stream(stream.url)
