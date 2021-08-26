@@ -4,7 +4,7 @@ from socket import timeout
 # from re import T
 from urllib.request import urlopen , Request
 import urllib.error, urllib.parse
-import libtorrent as lt
+# import libtorrent as lt
 from pytube import YouTube,request,streams
 import threading
 import time
@@ -587,8 +587,8 @@ class Downloade:
         #Gets the title of the video
             # title = video.title
             #Prepares the file for download
-            print ("Fetching: {}...".format(title))
-            print(title)
+            # print ("Fetching: {}...".format(title))
+            # print(title)
             #Starts the download process
             self.start_time = time.perf_counter()
             try:
@@ -616,8 +616,9 @@ class Downloade:
                 # print(pt)
             except Exception as e:
                 # f.close()
-                self.status = 'Downloading...'
+                
                 try:
+                    self.status = 'Downloading...'
                     with open(f'{self.realpath}//{self.user}//Download//{self.name}', 'wb') as f:
                         stream = request.seq_stream(video_type.url)
                         while True:

@@ -4,9 +4,10 @@ from sqlalchemy.orm import sessionmaker, scoped_session
 # from bot import DATABASE_URL, LOGGER
 import os
 
-
+from dotenv import load_dotenv
 def start() -> scoped_session:
   try:
+    load_dotenv()
     uri = os.getenv("DATABASE_URL")
       # or other relevant config var
       
