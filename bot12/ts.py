@@ -15,19 +15,19 @@ from pytube import YouTube,streams,request
 # # print(el)
 yt = YouTube('https://youtu.be/vKYF84UXQGI')
 stream = yt.streams.get_highest_resolution()
-
-
-with open('C:\\Users\\Elyas\\Documents\\1.mp4', 'wb') as f:
-    stream = request.stream(stream.url)
-    while True:
-        chunk = next(stream, None)
-        if chunk:
-            f.write(chunk)
-        else:
-            break
-# print(stream.resolution ,stream.abr , stream.filesize)
-for i in stream:
-    print(i)
+name = stream.default_filename
+print(name)
+# with open('C:\\Users\\Elyas\\Documents\\1.mp4', 'wb') as f:
+#     stream = request.stream(stream.url)
+#     while True:
+#         chunk = next(stream, None)
+#         if chunk:
+#             f.write(chunk)
+#         else:
+#             break
+# # print(stream.resolution ,stream.abr , stream.filesize)
+# for i in stream:
+#     print(i)
     # if i.resolution and i.abr:
     #     print(i.resolution ,i.abr , i.filesize)
     # if  i.abr and i.resolution is None :

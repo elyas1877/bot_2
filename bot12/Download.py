@@ -574,8 +574,11 @@ class Downloade:
         for i in strm:
             if  tag == i.itag:
                 video_type = i
-        title = video.title
-        self.name = f'{title}yt{mimetypes.guess_extension(video_type.mime_type)}'
+        self.name = video_type.default_filename
+        if self.name is None:
+            title = video_type.title
+            self.name = f'{title}[yt]{mimetypes.guess_extension(video_type.mime_type)}'
+        
         print(self.name)
         print(video_type.filesize)
         self.file_size = int(video_type.filesize)
@@ -612,12 +615,39 @@ class Downloade:
                 # pt = video_type.download(f'{self.realpath}//{self.user}//{Download}',title)
                 # print(pt)
             except Exception as e:
-                print(str(e))
-                print('error...!')
-                self.status = 'not working...'
-                self.complete = True
+                # f.close()
+                self.status = 'Downloading...'
+                try:
+                    with open(f'{self.realpath}//{self.user}//Download//{self.name}', 'wb') as f:
+                        stream = request.seq_stream(video_type.url)
+                        while True:
+                            if self.cancel:
+                                f.close()
+                                os.remove(f'{self.realpath}//{self.user}//{Download}//{self.name}')
+                                self.status = 'Canceld...'
+                                self.complete = True
+                                return
+                            chunk = next(stream, None)
+                            if chunk:
+                                f.write(chunk)
+                                self.dl_file_size += len(chunk)
+                                self.download_speed = self.dl_file_size//(time.perf_counter() - self.start_time)
+                                self.persent =  self.dl_file_size * 100. / self.file_size
+                                status = r"%10d  [%3.2f%%]" % (self.dl_file_size, self.persent)
+                                self.pre = status + chr(8)*(len(status)+1)
+                            else:
+                                break
+                except:
+                    self.status = 'not working...'
+                    self.complete = True
+                    return
+                # print(str(e))
+                # print('error...!')
+                # self.status = 'not working...'
+
+                # self.complete = True
                 # time.sleep(4000)
-                return
+                # return
                 # self.__downloadYouTube(url)
 
             print ("Ready to download another video.\n\n")
