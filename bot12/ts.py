@@ -13,11 +13,21 @@ from pytube import YouTube,streams,request
 # # print(r1.info())
 # # el = '/help 123'.removeprefix('/help ')
 # # print(el)
-yt = YouTube('https://www.youtube.com/watch?v=KHnX8ItCZL4&pp=sAQA')
-stream = yt.streams
+yt = YouTube('https://youtu.be/vKYF84UXQGI')
+stream = yt.streams.get_highest_resolution()
+
+
+with open('C:\\Users\\Elyas\\Documents\\1.mp4', 'wb') as f:
+    stream = request.stream(stream.url)
+    while True:
+        chunk = next(stream, None)
+        if chunk:
+            f.write(chunk)
+        else:
+            break
 # print(stream.resolution ,stream.abr , stream.filesize)
 for i in stream:
-    print(i.itag)
+    print(i)
     # if i.resolution and i.abr:
     #     print(i.resolution ,i.abr , i.filesize)
     # if  i.abr and i.resolution is None :

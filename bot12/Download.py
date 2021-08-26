@@ -575,7 +575,7 @@ class Downloade:
             if  tag == i.itag:
                 video_type = i
         title = video.title
-        self.name = f'{title}{mimetypes.guess_extension(video_type.mime_type)}'
+        self.name = f'{title}yt{mimetypes.guess_extension(video_type.mime_type)}'
         print(self.name)
         print(video_type.filesize)
         self.file_size = int(video_type.filesize)
