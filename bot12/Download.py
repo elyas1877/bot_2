@@ -1,3 +1,4 @@
+from youtube_dl.utils import preferredencoding
 import User
 import os
 from socket import timeout
@@ -5,7 +6,8 @@ from socket import timeout
 from urllib.request import urlopen , Request
 import urllib.error, urllib.parse
 import libtorrent as lt
-from pytube import YouTube,request,streams
+# from pytube import YouTube,request,streams
+import youtube_dl
 import threading
 import time
 import pickle
@@ -136,7 +138,14 @@ class Downloade:
                                                                                                                                             #,self.download_speed//1024
     @property
     def show(self) -> str:
-
+        # print('nameeeeeeee : ',self.name)
+        # print('statusssssss : ',self.status)
+        # print('file_sizeeeeeeeeeeee : ',self.file_size)
+        # print('preeeeeeeeeeeeee : ',self.pre)
+        # print('persenttttttttt : ',self.persent)
+        # print('download_speedddddddd : ',self.download_speed)
+        # print('download_iddddddddd : ',self.download_id)
+        # print('Name : {}\nStatus : {}\nsize : {}\n{}\n[{} {}]\nspeed :{} \n ID : {}\n'.format(self.name,self.status,self.__download_with_prograss(self.file_size),self.pre,int(self.persent//10)*'#',int(10 - (self.persent//10) ) * '_',self.__download_with_prograss(self.download_speed),self.download_id))
         return 'Name : {}\nStatus : {}\nsize : {}\n{}\n[{} {}]\nspeed :{} \n ID : {}\n'.format(self.name,self.status,self.__download_with_prograss(self.file_size),self.pre,int(self.persent//10)*'#',int(10 - (self.persent//10) ) * '_',self.__download_with_prograss(self.download_speed),self.download_id)
     
 
@@ -522,148 +531,78 @@ class Downloade:
             self.status = 'free up space...'
             return
 
-        # app.stop()
-
-    # def tg_starter(self):
-    #     try:
-    #         threading.Thread(target=self.__tgdownload,args=(self.url[1],)).start()
-    #         print('start tg downloader')
-    #         # threading.Thread(target=self.tgaccount.start()).start()
-    #         # threading.Thread(target=self.tgaccount.start).start()
-    #     except Exception as e:
-    #         print(str(e))
-    #         print('error!')
-
-
-    # def __on_progress(self,stream, chunk, bytes_remaining):
-    #     bytes_downloaded = self.file_size - bytes_remaining 
-    #     self.persent = (float)(bytes_downloaded / self.file_size * 100)
-    #     if self.persent > self.previousprogress:
-    #         self.previousprogress = self.persent
-    #         #print("{:00.0f}% downloaded".format(self.persent))
-    #         #self.pre = "{:00.0f}% downloaded".format(self.persent)
-    #         self.pre = r"%10d  [%3.2f%%]" % (bytes_downloaded, self.persent)
-    #         print(self.pre)
-
-       
+    def my_hook(self,pro):
+        # if pro['status'] == 'finished':
+            # self.name = pro['filename'].split('\\')[-1]
+        # print(pro)
+        # if pro['status'] == 'downloading': 
+            # self.name = pro['filename'].split('\\')[-1]
+            current = int(pro['downloaded_bytes'])
+            self.status = pro['status']
+            self.download_speed = int(current//(time.perf_counter() - self.start_time))
+            # print(self.download_speed)
+            # print(type(self.download_speed))
+            self.persent = (float)(current * 100 / int(pro['total_bytes']) )
+            # print(self.persent)
+            self.pre = r"%10d  [%3.2f%%]" % (current, self.persent)
+        # print(self.show)
     def __downloadYouTube(self,url:str):
         yt_url = url
-        Download = 'Download'
+        # Download = 'Download'
         print(yt_url)
         ex = os.path.join(self.realpath, self.user,'Download')
         if not os.path.exists(ex):
             os.makedirs(ex)
         print ("Accessing YouTube URL...")
-        try:
-            video = YouTube(yt_url)
-        except:
-            print("ERROR. Check your:\n  -connection\n  -url is a YouTube url\n\nTry again.")
-            print('error')
-            self.status = 'not working...'
-            self.complete = True
-            return
-#  video_type
-        #Get the first video type - usually the best quality.
-        try:
-            strm = video.streams
-        except:
-            self.status = 'not working...'
-            self.complete = True
-            return
-        tag = int(self.url[1])
-        for i in strm:
-            if  tag == i.itag:
-                video_type = i
-        self.name = video_type.default_filename
-        if self.name is None:
-            title = video_type.title
-            self.name = f'{title}[yt]{mimetypes.guess_extension(video_type.mime_type)}'
-        
-        print(self.name)
-        print(video_type.filesize)
-        self.file_size = int(video_type.filesize)
+        save_path = f'{self.realpath}//{self.user}//Download//'
+        format = self.url[1]
+        # self.name = 
+        ydl_opts = {
+                    'outtmpl': save_path + '%(title)s-%(id)s.%(ext)s',
+                    'format' : format,
+                    'progress_hooks': [self.my_hook]
+                }
+        self.file_size = int(self.url[2])
+        print(self.file_size)
         if self.chek():
-            print(self.download_id)
-        #Gets the title of the video
-            # title = video.title
-            #Prepares the file for download
-            # print ("Fetching: {}...".format(title))
-            # print(title)
-            #Starts the download process
-            self.start_time = time.perf_counter()
             try:
+                ydl = youtube_dl.YoutubeDL(ydl_opts) 
+                self.name = ydl.extract_info(yt_url, False).get('title')
                 self.status = 'Downloading...'
-                with open(f'{self.realpath}//{self.user}//Download//{self.name}', 'wb') as f:
-                    stream = request.stream(video_type.url)
-                    while True:
-                        if self.cancel:
-                            f.close()
-                            os.remove(f'{self.realpath}//{self.user}//{Download}//{self.name}')
-                            self.status = 'Canceld...'
-                            self.complete = True
-                            return
-                        chunk = next(stream, None)
-                        if chunk:
-                            f.write(chunk)
-                            self.dl_file_size += len(chunk)
-                            self.download_speed = self.dl_file_size//(time.perf_counter() - self.start_time)
-                            self.persent =  self.dl_file_size * 100. / self.file_size
-                            status = r"%10d  [%3.2f%%]" % (self.dl_file_size, self.persent)
-                            self.pre = status + chr(8)*(len(status)+1)
-                        else:
-                            break
-                # pt = video_type.download(f'{self.realpath}//{self.user}//{Download}',title)
-                # print(pt)
-            except Exception as e:
-                # f.close()
-                
-                try:
-                    self.status = 'Downloading...'
-                    with open(f'{self.realpath}//{self.user}//Download//{self.name}', 'wb') as f:
-                        stream = request.seq_stream(video_type.url)
-                        while True:
-                            if self.cancel:
-                                f.close()
-                                os.remove(f'{self.realpath}//{self.user}//{Download}//{self.name}')
-                                self.status = 'Canceld...'
-                                self.complete = True
-                                return
-                            chunk = next(stream, None)
-                            if chunk:
-                                f.write(chunk)
-                                self.dl_file_size += len(chunk)
-                                self.download_speed = self.dl_file_size//(time.perf_counter() - self.start_time)
-                                self.persent =  self.dl_file_size * 100. / self.file_size
-                                status = r"%10d  [%3.2f%%]" % (self.dl_file_size, self.persent)
-                                self.pre = status + chr(8)*(len(status)+1)
-                            else:
-                                break
-                except:
-                    self.status = 'not working...'
-                    self.complete = True
-                    return
-                # print(str(e))
-                # print('error...!')
-                # self.status = 'not working...'
-
-                # self.complete = True
-                # time.sleep(4000)
+                self.download_id = -1
+                self.start_time = time.perf_counter()
+                # ydl.add_progress_hook(self.my_hook)
+                ie_result = ydl.extract_info(yt_url, True)
+                name = ydl.prepare_filename(ie_result)
+                if name.endswith('.webm') and '+' in format:
+                    name = name.replace('.webm','.mkv')
+                print ("Ready to download another video.\n\n")
+                self.address = f'{name}'
+                # self.name = '33'
+                print(self.address)
+                self.status = 'Preparing for upload...'
+                # ydl.__exit__()
                 # return
-                # self.__downloadYouTube(url)
-
-            print ("Ready to download another video.\n\n")
-            self.complete = True
-            self.ready = True
-            self.status = 'Preparing for upload...'
-            self.address = f'{self.realpath}//{self.user}//Download//{self.name}'
-            self.mimtype = video_type.mime_type
+                print ("comp")
+                    # self.mimtype = video_type.mime_type
+                    # print(name)
+            except:
+                print("ERROR. Check your:\n  -connection\n  -url is a YouTube url\n\nTry again.")
+                print('error')
+                self.status = 'not working...'
+                self.complete = True
+                return
         else:
             self.complete = True
             self.status = 'free up space...'
             return
+        print('compelet')
+        self.complete = True
+        self.ready = True
     def yt_starter(self):
         try:
             threading.Thread(target=self.__downloadYouTube,args=(self.url[0],)).start()
+            # threading.Thread(target=self.wh).start()
             print('elyas')
         except Exception as e:
             print(str(e))

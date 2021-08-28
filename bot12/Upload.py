@@ -95,7 +95,6 @@ class Upload:
     #         os.remove(f'{ad}//{str(id)}//auth//token.pickle')
     #     except:
     #         pass
-
     @property
     def show(self) -> str:
         # print(self.size,'elyas')
@@ -107,6 +106,7 @@ class Upload:
         try:
             size :int = os.path.getsize(path)
         except:
+            self.complete = True
             return
         
         self.size = size

@@ -6,8 +6,9 @@ from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, Callback
 import logging
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
 import sys,os
-import pickle
-from pytube import YouTube
+# import pickle
+# from pytube import YouTube
+import random
 from googleapiclient.http import MediaFileUpload
 # from pytube import YouTube
 from googleapiclient.discovery import build
@@ -20,6 +21,7 @@ from google.oauth2 import service_account
 # from queue import Queue
 # from datetime import datetime
 # import Download
+import youtube_dl
 from DB import google_drive_DB
 import threading
 import time
@@ -214,6 +216,7 @@ class Bot:
 
                 try:
                     text += i.showe_downloads
+                    # print(i.showe_downloads)
                 except:
                     print('not download')
                 # text += f'CC: @{i.user_name}\n' 
@@ -323,7 +326,7 @@ class Bot:
         print(query)
         lsst = query.data.split(',')
         id_ = int(lsst[2])
-        links = (lsst[0],lsst[1])
+        links = (lsst[0],lsst[1],lsst[3])
         print(lsst)
         print(links)
         print(query.from_user.username)
@@ -428,18 +431,38 @@ class Bot:
                     if self.__is_youtubelink(link_text):
                         keyboard = []
                         try:
-                            yt = YouTube(link_text)
-                            stream = yt.streams
+                            ydl_opts = {}
+                            download = False
+                            with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+                                ie_result = ydl.extract_info(link_text, download)
+                                formats = ie_result.get('formats')
+                                sound = None
+                                audio = [i for i in formats if i['ext'] == 'm4a' and i['filesize'] is not None and i['height'] is None]
+                                if audio:
+                                    sound = audio[0]
+                                if not audio:
+                                    audio = [i for i in formats if i['height'] is None and i['filesize'] is not None]
+                                    sound = random.choice(audio)
+                            # yt = YouTube(link_text)
+                            # stream = yt.streams
                         except:
                             context.bot.send_message(self.chat_id,'try again !')
                             return
-                        for i in stream:
-                            if i.resolution and i.abr:
+                        for i in formats:
+                            if i['asr'] is None and i['filesize'] is not None:
                                 # print(i.resolution ,i.abr , i.filesize)
-                                keyboard.append( [InlineKeyboardButton(f"Video 🎬 : {i.resolution} | size : {self.__download_with_prograss(i.filesize)}", callback_data=f'{link_text},{i.itag},{id_}')])
-                            if  i.abr and i.resolution is None :
+                                vid = i['format_id']
+                                snd = sound['format_id']
+                                size = i['filesize']+sound['filesize']
+                                dd = f'{vid}+{snd}'
+                                print(dd)
+                                keyboard.append( [InlineKeyboardButton(f"Video 🎬 : {i['format_note']} | ext : {i['ext']} | size : {self.__download_with_prograss(size)}", callback_data=f'{link_text},{dd},{id_},{size}')])
+                            if i['height'] is None and i['filesize'] is not None and i['asr'] is not None:
                                 # print(i.abr , i.filesize)
-                                keyboard.append( [InlineKeyboardButton(f"Audio 🎧 : {i.abr} | size : {self.__download_with_prograss(i.filesize)}", callback_data=f'{link_text},{i.itag},{id_}')])
+                                dd=i['format_id']
+                                size = i['filesize']
+                                print(dd)
+                                keyboard.append( [InlineKeyboardButton(f"Audio 🎧 : {i['asr']} | ext : {i['ext']} | size : {self.__download_with_prograss(size)}", callback_data=f'{link_text},{dd},{id_},{size}')])
                         reply_markup = InlineKeyboardMarkup(keyboard)
                         update.message.reply_text(text=link_text , reply_markup=reply_markup)
                         return

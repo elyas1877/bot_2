@@ -94,7 +94,7 @@ class User:
                 # self.__youtube_url_validation()
                 if self.__is_youtubelink(down.url[0]):
                     down.yt_starter()
-                    print('youtube')
+                    print('youtubeeeeeeeeeeeeeeeeee')
                     self.downloads.append(down)
                     #'magnet' in down.url[0]
                 elif self.__is_magnet(down.url[0]):
@@ -142,7 +142,10 @@ class User:
 
     def cancel_download(self,id:int):
         down = None
-        print()
+        if id == -1:
+            print('can\'t cancel this...' )
+            return
+        # print()
         for i in self.downloads:
             if i.download_id == id:
                 # time.sleep(4)
@@ -192,10 +195,15 @@ class User:
     @property
     def showe_downloads(self):
         # if len(self.downloads)!=0:
+            # dn = self.downloads[0]
+            # print(dn.complete,dn.ready)
+            # print(dn.show)
             text = ''
             for i in self.downloads:
                 text+= i.show
-                # print(text)
+                print(i.complete,i.ready)
+                print(text)
+                # print(i.complete,i.ready)
                 if i.complete and i.ready:
                     self.paths.append(Upload.Upload(i.user,i.address,i.mimtype))
                     self.downloads.remove(i)
