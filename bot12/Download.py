@@ -532,20 +532,11 @@ class Downloade:
             return
 
     def my_hook(self,pro):
-        # if pro['status'] == 'finished':
-            # self.name = pro['filename'].split('\\')[-1]
-        # print(pro)
-        # if pro['status'] == 'downloading': 
-            # self.name = pro['filename'].split('\\')[-1]
             current = int(pro['downloaded_bytes'])
             self.status = pro['status']
             self.download_speed = int(current//(time.perf_counter() - self.start_time))
-            # print(self.download_speed)
-            # print(type(self.download_speed))
             self.persent = (float)(current * 100 / int(pro['total_bytes']) )
-            # print(self.persent)
             self.pre = r"%10d  [%3.2f%%]" % (current, self.persent)
-        # print(self.show)
     def __downloadYouTube(self,url:str):
         yt_url = url
         # Download = 'Download'
@@ -560,18 +551,17 @@ class Downloade:
         ydl_opts = {
                     'outtmpl': save_path + '%(title)s-%(id)s.%(ext)s',
                     'format' : format,
-                    'progress_hooks': [self.my_hook]
                 }
         self.file_size = int(self.url[2])
         print(self.file_size)
         if self.chek():
             try:
                 ydl = youtube_dl.YoutubeDL(ydl_opts) 
-                self.name = ydl.extract_info(yt_url, False).get('title')
+                self.name = self.url[3]
                 self.status = 'Downloading...'
                 self.download_id = -1
                 self.start_time = time.perf_counter()
-                # ydl.add_progress_hook(self.my_hook)
+                ydl.add_progress_hook(self.my_hook)
                 ie_result = ydl.extract_info(yt_url, True)
                 name = ydl.prepare_filename(ie_result)
                 if name.endswith('.webm') and '+' in format:

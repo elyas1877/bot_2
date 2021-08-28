@@ -326,7 +326,7 @@ class Bot:
         print(query)
         lsst = query.data.split(',')
         id_ = int(lsst[2])
-        links = (lsst[0],lsst[1],lsst[3])
+        links = (lsst[0],lsst[1],lsst[3],lsst[4])
         print(lsst)
         print(links)
         print(query.from_user.username)
@@ -436,6 +436,7 @@ class Bot:
                             with youtube_dl.YoutubeDL(ydl_opts) as ydl:
                                 ie_result = ydl.extract_info(link_text, download)
                                 formats = ie_result.get('formats')
+                                title = ie_result.get('title')
                                 sound = None
                                 audio = [i for i in formats if i['ext'] == 'm4a' and i['filesize'] is not None and i['height'] is None]
                                 if audio:
@@ -455,14 +456,17 @@ class Bot:
                                 snd = sound['format_id']
                                 size = i['filesize']+sound['filesize']
                                 dd = f'{vid}+{snd}'
+                                ext = i['ext']
+                                if ext == '.webm':
+                                    ext = '.mkv'
                                 print(dd)
-                                keyboard.append( [InlineKeyboardButton(f"Video 🎬 : {i['format_note']} | ext : {i['ext']} | size : {self.__download_with_prograss(size)}", callback_data=f'{link_text},{dd},{id_},{size}')])
+                                keyboard.append( [InlineKeyboardButton(f"Video🎬:{i['format_note']}|ext:{ext}|size:{self.__download_with_prograss(size)}", callback_data=f'{link_text},{dd},{id_},{size},{title}')])
                             if i['height'] is None and i['filesize'] is not None and i['asr'] is not None:
                                 # print(i.abr , i.filesize)
                                 dd=i['format_id']
                                 size = i['filesize']
                                 print(dd)
-                                keyboard.append( [InlineKeyboardButton(f"Audio 🎧 : {i['asr']} | ext : {i['ext']} | size : {self.__download_with_prograss(size)}", callback_data=f'{link_text},{dd},{id_},{size}')])
+                                keyboard.append( [InlineKeyboardButton(f"Audio🎧:{i['asr']}|ext:{i['ext']}|size:{self.__download_with_prograss(size)}", callback_data=f'{link_text},{dd},{id_},{size},{title}')])
                         reply_markup = InlineKeyboardMarkup(keyboard)
                         update.message.reply_text(text=link_text , reply_markup=reply_markup)
                         return
