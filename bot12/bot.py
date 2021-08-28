@@ -324,12 +324,17 @@ class Bot:
         query = update.callback_query
         # query.from_user.id
         print(query)
+        tit = query.message.text.split('\n&&')
+        title = tit[1]
+        linke = tit[0]
+        print(linke , title)
+        # print()
         lsst = query.data.split(',')
-        id_ = int(lsst[2])
-        links = (lsst[0],lsst[1],lsst[3],lsst[4])
-        print(lsst)
-        print(links)
-        print(query.from_user.username)
+        id_ = int(lsst[1])
+        links = (linke,lsst[0],lsst[2],title)
+        # print(lsst)
+        # print(links)
+        # print(query.from_user.username)
         Id = query.from_user.id
         # print(type(Id))
         if Upload.check(Id):
@@ -437,6 +442,9 @@ class Bot:
                                 ie_result = ydl.extract_info(link_text, download)
                                 formats = ie_result.get('formats')
                                 title = ie_result.get('title')
+                                # title = ''.join(x for x in tit if x.isalpha() or x.isdigit())
+                                # title = ydl.prepare_filename(ie_result).split()
+                                print(title)
                                 sound = None
                                 audio = [i for i in formats if i['ext'] == 'm4a' and i['filesize'] is not None and i['height'] is None]
                                 if audio:
@@ -457,21 +465,28 @@ class Bot:
                                 size = i['filesize']+sound['filesize']
                                 dd = f'{vid}+{snd}'
                                 ext = i['ext']
-                                if ext == '.webm':
-                                    ext = '.mkv'
-                                print(dd)
-                                keyboard.append( [InlineKeyboardButton(f"Video🎬:{i['format_note']}|ext:{ext}|size:{self.__download_with_prograss(size)}", callback_data=f'{link_text},{dd},{id_},{size},{title}')])
+                                # print(ext)
+                                if ext == 'webm':
+                                    # print(ext)
+                                    ext = 'mkv'
+                                # print(ext)
+                                # print(dd)
+                                # print(f'{link_text},{dd},{id_},{size},{title}')
+                                keyboard.append( [InlineKeyboardButton(f"Video🎬:{i['format_note']}|ext:.{ext}|size:{self.__download_with_prograss(size)}", callback_data=f'{dd},{id_},{size}')])
                             if i['height'] is None and i['filesize'] is not None and i['asr'] is not None:
                                 # print(i.abr , i.filesize)
                                 dd=i['format_id']
                                 size = i['filesize']
-                                print(dd)
-                                keyboard.append( [InlineKeyboardButton(f"Audio🎧:{i['asr']}|ext:{i['ext']}|size:{self.__download_with_prograss(size)}", callback_data=f'{link_text},{dd},{id_},{size},{title}')])
+                                # print(dd)
+                                # print(f'{link_text},{dd},{id_},{size},{title}')
+                                keyboard.append( [InlineKeyboardButton(f"Audio🎧:{i['asr']}|ext:.{i['ext']}|size:{self.__download_with_prograss(size)}", callback_data=f'{dd},{id_},{size}')])
                         reply_markup = InlineKeyboardMarkup(keyboard)
-                        update.message.reply_text(text=link_text , reply_markup=reply_markup)
+                        txt = link_text + '\n&&' + title
+                        update.message.reply_text(text=txt , reply_markup=reply_markup)
                         return
-                except:
-                    pass
+                except Exception as e:
+                    print(e)
+                    return
             # duc_id = update.message.reply_to_message.document
 
             #todo

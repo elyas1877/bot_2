@@ -552,12 +552,14 @@ class Downloade:
                     'outtmpl': save_path + '%(title)s-%(id)s.%(ext)s',
                     'format' : format,
                 }
+
+        self.name = self.url[3]
         self.file_size = int(self.url[2])
         print(self.file_size)
         if self.chek():
             try:
+                time.sleep(3)
                 ydl = youtube_dl.YoutubeDL(ydl_opts) 
-                self.name = self.url[3]
                 self.status = 'Downloading...'
                 self.download_id = -1
                 self.start_time = time.perf_counter()

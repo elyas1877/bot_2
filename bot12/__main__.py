@@ -13,8 +13,6 @@ def main():
         # bot.starter()
     # bot.
     threading.Thread(target=bot1.starter).start()
-
-
     bot.loop.run_forever()
     print('1')
 

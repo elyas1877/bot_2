@@ -194,16 +194,9 @@ class User:
 
     @property
     def showe_downloads(self):
-        # if len(self.downloads)!=0:
-            # dn = self.downloads[0]
-            # print(dn.complete,dn.ready)
-            # print(dn.show)
             text = ''
             for i in self.downloads:
                 text+= i.show
-                print(i.complete,i.ready)
-                print(text)
-                # print(i.complete,i.ready)
                 if i.complete and i.ready:
                     self.paths.append(Upload.Upload(i.user,i.address,i.mimtype))
                     self.downloads.remove(i)
