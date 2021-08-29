@@ -1,11 +1,12 @@
 from youtube_dl.utils import preferredencoding
 import User
-import os
+import os,sys
 from socket import timeout
 # from re import T
 from urllib.request import urlopen , Request
 import urllib.error, urllib.parse
 import libtorrent as lt
+# import multiprocessing
 # from pytube import YouTube,request,streams
 import youtube_dl
 import threading
@@ -26,6 +27,35 @@ import mimetypes
     # app.DOWNLOAD_WORKERS = 4
 # app.start()
 
+class thread_with_trace(threading.Thread):
+    def __init__(self, *args, **keywords):
+        threading.Thread.__init__(self, *args, **keywords)
+        self.killed = False
+
+    def start(self):
+        self.__run_backup = self.run
+        self.run = self.__run	
+        threading.Thread.start(self)
+
+    def __run(self):
+        sys.settrace(self.globaltrace)
+        self.__run_backup()
+        self.run = self.__run_backup
+
+    def globaltrace(self, frame, event, arg):
+        if event == 'call':
+            return self.localtrace
+        else:
+            return None
+
+    def localtrace(self, frame, event, arg):
+        if self.killed:
+            if event == 'line':
+                raise SystemExit()
+            return self.localtrace
+
+    def kill(self):
+        self.killed = True
 class Downloade:
     def __init__(self,user:int,url :str,info:User,id:int):
         self.user = str(user)
@@ -41,7 +71,7 @@ class Downloade:
         self.start_time = None
         self.address = None
         self.cancel = False
-        self.task = None
+        self.task :thread_with_trace = None
         self.dl_file_size = 0
         self.download_speed = 0
         self.info_ = info
@@ -532,6 +562,9 @@ class Downloade:
             return
 
     def my_hook(self,pro):
+            # if self.cancel:
+            #     print('error')
+            #     raise SystemExit()
             current = int(pro['downloaded_bytes'])
             self.status = pro['status']
             self.download_speed = int(current//(time.perf_counter() - self.start_time))
@@ -561,7 +594,7 @@ class Downloade:
                 time.sleep(3)
                 ydl = youtube_dl.YoutubeDL(ydl_opts) 
                 self.status = 'Downloading...'
-                self.download_id = -1
+                # self.download_id = -1
                 self.start_time = time.perf_counter()
                 ydl.add_progress_hook(self.my_hook)
                 ie_result = ydl.extract_info(yt_url, True)
@@ -593,7 +626,9 @@ class Downloade:
         self.ready = True
     def yt_starter(self):
         try:
-            threading.Thread(target=self.__downloadYouTube,args=(self.url[0],)).start()
+            # self.task :thread_with_trace
+            self.task=thread_with_trace(target=self.__downloadYouTube,args=(self.url[0],))
+            self.task.start()
             # threading.Thread(target=self.wh).start()
             print('elyas')
         except Exception as e:

@@ -7,6 +7,7 @@ import Upload
 import asyncio
 import shutil
 import re
+import threading
 # loope = asyncio.new_event_loop()
 # looper :bool = True
 # print('run')
@@ -153,7 +154,12 @@ class User:
                 print('ca')
                 down = i
                 break
-
+        if down.task :
+            down.task.kill()
+            print('killing')
+            down.task.join()
+            if not down.task.is_alive():
+                print('killed')
         for j in self.tasks:
             if j[1] == id:
                 # time.sleep(4)
@@ -177,8 +183,9 @@ class User:
     def user_deleter(self):
         if len(self.downloads)==0 and len(self.queue_links)==0 and len(self.paths)==0 and self.uploads is None:
             ad = os.path.split(os.path.abspath(__file__))[0]
-            shutil.rmtree(f'{ad}//{str(self.id)}//Download')
-            return True
+            with threading.RLock():
+                shutil.rmtree(f'{ad}//{str(self.id)}//Download')
+                return True
         return False
     
     def deleter(self):
