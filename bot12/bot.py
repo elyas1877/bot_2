@@ -32,6 +32,8 @@ import shutil
 from pyrogram import Client
 import math
 from urllib.parse import urlparse
+# from dotenv import load_dotenv
+# load_dotenv()
 loop = asyncio.get_event_loop()
 
 class Bot:
@@ -380,13 +382,15 @@ class Bot:
                         print('error...')
             else:
                 try:
-                    context.bot.send_message(self.chat_id,'it\'s not yours !')
+                    context.bot.answer_callback_query(query.id,'it\'s not yours !',show_alert=True)
+                    # context.bot.send_message(self.chat_id,'it\'s not yours !')
                 except:
                     time.sleep(2)
-                    context.bot.send_message(self.chat_id,'it\'s not yours !')
+                    context.bot.answer_callback_query(query.id,'it\'s not yours !',show_alert=True)
         else:
-            context.bot.send_message(self.chat_id,' First Auth !')
-        pass
+            # context.bot.send_message(self.chat_id,' First Auth !')
+            context.bot.answer_callback_query(query.id,' First Auth !',show_alert=True)
+        # pass
     def dele(self, update: Update, context: CallbackContext) -> None:
         if update.message.chat_id == self.chat_id:
             id_ =  update.message.from_user.id
@@ -412,10 +416,12 @@ class Bot:
             r'(https?://)?(www\.)?'
             '(youtube|youtu)\.(com|be)/'
             '(watch\?v=|embed/|v/|.+\?v=)?([^&=%\?]{11})')
-
-        youtube_regex_match = re.match(youtube_regex, url)
-        if youtube_regex_match:
-            return youtube_regex_match
+        try:
+            youtube_regex_match = re.match(youtube_regex, url)
+            if youtube_regex_match:
+                return youtube_regex_match
+        except:
+            return False
 
         return youtube_regex_match
     def __is_youtubelink(self,url):
@@ -472,14 +478,14 @@ class Bot:
                                 # print(ext)
                                 # print(dd)
                                 # print(f'{link_text},{dd},{id_},{size},{title}')
-                                keyboard.append( [InlineKeyboardButton(f"Video🎬:{i['format_note']}|ext:.{ext}|size:{self.__download_with_prograss(size)}", callback_data=f'{dd},{id_},{size}')])
+                                keyboard.append( [InlineKeyboardButton(f"🎬:{i['format_note']}|ext:{ext}|size:{self.__download_with_prograss(size)}", callback_data=f'{dd},{id_},{size}')])
                             if i['height'] is None and i['filesize'] is not None and i['asr'] is not None:
                                 # print(i.abr , i.filesize)
                                 dd=i['format_id']
                                 size = i['filesize']
                                 # print(dd)
                                 # print(f'{link_text},{dd},{id_},{size},{title}')
-                                keyboard.append( [InlineKeyboardButton(f"Audio🎧:{i['asr']}|ext:.{i['ext']}|size:{self.__download_with_prograss(size)}", callback_data=f'{dd},{id_},{size}')])
+                                keyboard.append( [InlineKeyboardButton(f"🎧:{i['asr']}|ext:{i['ext']}|size:{self.__download_with_prograss(size)}", callback_data=f'{dd},{id_},{size}')])
                         reply_markup = InlineKeyboardMarkup(keyboard)
                         txt = link_text + '\n&&' + title
                         update.message.reply_text(text=txt , reply_markup=reply_markup)
