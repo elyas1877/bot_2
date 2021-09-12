@@ -21,11 +21,6 @@ import random
 import math
 from DB import google_drive_DB
 import mimetypes
-# 443
-# import test_2
-# app = Client(api_id=5975714,session_name='BACK2gCuzoLPCD1cEBt8xlxdQ0RXnHHiQkzDFlCi_hGRTYJvGchW3jyVdqFQvpSsF4pCXa2UCEkXosrWmlbJ_uA2V-3bU5mM0ep5455ui_LDTxUQvCPdsscNrHNXWmV9XFrux4OSZtu-rcnsDcnZO3ZVmnTzyDd9cqGv00AqQ5xUUX1Q1J8BjDs825JMmohFjlOAJ6qA1Q0o-TtW2KLcQN8EC5w8naV1EA7ZvnG1WTcJdO-t8ILKrtQHMFdxNBlgQ76rQjv82O7kI99AMBWEUo3r_QkVIPr3sUyqKEsrgusm7Ef6g2OoDG6AaeiybU7pS0-sI3Tlv6fRbQ1lXYX8CH5EZ0EVuAA',api_hash='8d1ea6da21f3ddb0426938c3975fb0e7')
-    # app.DOWNLOAD_WORKERS = 4
-# app.start()
 
 class thread_with_trace(threading.Thread):
     def __init__(self, *args, **keywords):
@@ -76,6 +71,7 @@ class Downloade:
         self.download_speed = 0
         self.info_ = info
         self.name = None
+        self.etas=0
         # if url[0] is not None: 
         #     if 'youtube' in url[0] or 'youtu' in url[0]:
         #         video = YouTube(url[0])
@@ -97,10 +93,7 @@ class Downloade:
         # else:
         #     self.name = url[1].document.file_name
         #     self.file_size = int(url[1].document.file_size)
-
-        self.previousprogress = 0
         self.mimtype = None
-        # self.tgaccount = Client(api_id=5975714,session_name='BACK2gCuzoLPCD1cEBt8xlxdQ0RXnHHiQkzDFlCi_hGRTYJvGchW3jyVdqFQvpSsF4pCXa2UCEkXosrWmlbJ_uA2V-3bU5mM0ep5455ui_LDTxUQvCPdsscNrHNXWmV9XFrux4OSZtu-rcnsDcnZO3ZVmnTzyDd9cqGv00AqQ5xUUX1Q1J8BjDs825JMmohFjlOAJ6qA1Q0o-TtW2KLcQN8EC5w8naV1EA7ZvnG1WTcJdO-t8ILKrtQHMFdxNBlgQ76rQjv82O7kI99AMBWEUo3r_QkVIPr3sUyqKEsrgusm7Ef6g2OoDG6AaeiybU7pS0-sI3Tlv6fRbQ1lXYX8CH5EZ0EVuAA',api_hash='8d1ea6da21f3ddb0426938c3975fb0e7')
         
     def __download_with_prograss(self,file_size: int):
         if file_size == 0:
@@ -110,6 +103,24 @@ class Downloade:
         p = math.pow(1024, i)
         s = round(file_size / p, 2)
         return "%s %s" % (s, size_name[i])
+    
+    def TimeFormatter(self,milliseconds: int) -> str:
+        seconds, milliseconds = divmod(int(milliseconds), 1000)
+        minutes, seconds = divmod(seconds, 60)
+        hours, minutes = divmod(minutes, 60)
+        days, hours = divmod(hours, 24)
+        tmp = ((str(days) + " days, ") if days else "") + \
+            ((str(hours) + " hours, ") if hours else "") + \
+            ((str(minutes) + " min, ") if minutes else "") + \
+            ((str(seconds) + " sec, ") if seconds else "") + \
+            ((str(milliseconds) + " millisec, ") if milliseconds else "")
+        return tmp[:-2]
+
+    def __convert_etas(self,file_time):
+        if file_time == 0:
+            return 'No Time!'
+        return self.TimeFormatter(file_time)
+        
 
     def info(self):
         # ad = os.path.split(os.path.abspath(__file__))[0]
@@ -176,7 +187,7 @@ class Downloade:
         # print('download_speedddddddd : ',self.download_speed)
         # print('download_iddddddddd : ',self.download_id)
         # print('Name : {}\nStatus : {}\nsize : {}\n{}\n[{} {}]\nspeed :{} \n ID : {}\n'.format(self.name,self.status,self.__download_with_prograss(self.file_size),self.pre,int(self.persent//10)*'#',int(10 - (self.persent//10) ) * '_',self.__download_with_prograss(self.download_speed),self.download_id))
-        return 'Name : {}\nStatus : {}\nsize : {}\n{}\n[{} {}]\nspeed :{} \n ID : {}\n'.format(self.name,self.status,self.__download_with_prograss(self.file_size),self.pre,int(self.persent//10)*'#',int(10 - (self.persent//10) ) * '_',self.__download_with_prograss(self.download_speed),self.download_id)
+        return 'Name : {}\nStatus : {}\nsize : {}\n{}\n[{}{}]\nspeed :{} \nTime Left :{} \nID :{}\n'.format(self.name,self.status,self.__download_with_prograss(self.file_size),self.pre,int(self.persent//10)*'▓',int(10 - (self.persent//10) ) * '▒',self.__download_with_prograss(self.download_speed),self.__convert_etas(self.etas),self.download_id)
     
 
 
@@ -274,6 +285,7 @@ class Downloade:
                 # print(self.dl_file_size)
                 f.write(buffer)
                 self.download_speed = self.dl_file_size//(time.perf_counter() - self.start_time)
+                self.etas = round(((self.file_size - self.dl_file_size) / self.download_speed)) * 1000
                 # print(self.download_speed)
                 self.persent =  self.dl_file_size * 100. / self.file_size
                 status = r"%10d  [%3.2f%%]" % (self.dl_file_size, self.persent)
@@ -484,6 +496,7 @@ class Downloade:
         # print(current)
         # print(self.dl_file_size)
         self.download_speed = current//(time.perf_counter() - self.start_time)
+        self.etas = round(((self.file_size - current) / self.download_speed)) * 1000
         self.persent = (float)(current * 100 / self.file_size )
         self.pre = r"%10d  [%3.2f%%]" % (current, self.persent)
         # print(self.pre)
@@ -568,6 +581,8 @@ class Downloade:
             current = int(pro['downloaded_bytes'])
             self.status = pro['status']
             self.download_speed = int(current//(time.perf_counter() - self.start_time))
+            self.etas = round(((self.file_size - current) / self.download_speed)) * 1000
+
             self.persent = (float)(current * 100 / int(pro['total_bytes']) )
             self.pre = r"%10d  [%3.2f%%]" % (current, self.persent)
     def __downloadYouTube(self,url:str):

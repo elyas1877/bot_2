@@ -32,6 +32,7 @@ class Upload:
         self.up =0
         self.chunk = 0
         self.folder_id = None
+        self.etas = 0
     def __download_with_prograss(self,file_size: int):
         if file_size == 0:
             return "0B"
@@ -41,7 +42,23 @@ class Upload:
         s = round(file_size / p, 2)
         return "%s %s" % (s, size_name[i])
 
+    def TimeFormatter(self,milliseconds: int) -> str:
+        seconds, milliseconds = divmod(int(milliseconds), 1000)
+        minutes, seconds = divmod(seconds, 60)
+        hours, minutes = divmod(minutes, 60)
+        days, hours = divmod(hours, 24)
+        tmp = ((str(days) + " days, ") if days else "") + \
+            ((str(hours) + " hours, ") if hours else "") + \
+            ((str(minutes) + " min, ") if minutes else "") + \
+            ((str(seconds) + " sec, ") if seconds else "") + \
+            ((str(milliseconds) + " millisec, ") if milliseconds else "")
+        return tmp[:-2]
 
+    def __convert_etas(self,file_time):
+        if file_time == 0:
+            return 'No Time!'
+        return self.TimeFormatter(file_time)
+        
 
     def authorization(self):
         try:
@@ -97,7 +114,7 @@ class Upload:
     @property
     def show(self) -> str:
         # print(self.size,'elyas')
-        return 'Name : {}\nStatus : {}\nsize : {}\n{}\n[{} {}]\nspeed: {}\n'.format(self.name,self.status,self.__download_with_prograss(self.size),self.pre,int(self.persent//10)*'#',int(10 - (self.persent//10) ) * '_',self.__download_with_prograss(self.upload_speed))
+        return 'Name : {}\nStatus : {}\nsize : {}\n{}\n[{} {}]\nspeed: {}\nTime Left :{}'.format(self.name,self.status,self.__download_with_prograss(self.size),self.pre,int(self.persent//10)*'#',int(10 - (self.persent//10) ) * '_',self.__download_with_prograss(self.upload_speed),self.__convert_etas(self.etas))
 
     def Upload(self,path:str,mimtype = None):
         self.folder_id = self.__validation()
@@ -147,6 +164,7 @@ class Upload:
                 if(size>=self.chunk):
                     self.up +=self.chunk
                     self.upload_speed = self.up//(time.perf_counter() - self.start_time)
+                    self.etas = round(((self.size - self.up) / self.upload_speed)) * 1000
                     size-=self.chunk
                     # size=self.__download_with_prograss(size)
                 if self.cancel:
@@ -161,7 +179,10 @@ class Upload:
                     # print(self.status)
             except HttpError as err:
                 print(err)
-                self.Upload(path,self.mimtype)
+                # self.Upload(path,self.mimtype)
+                self.address = path
+                self.complete = True
+                return
         print('Done!')
         
         self.address = path
