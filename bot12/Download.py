@@ -383,7 +383,7 @@ class Downloade:
                 try:
                     while (handle.status().state != lt.torrent_status.seeding):
                         s = handle.status()
-                        print(s)
+                        # print(s)
                         state_str = ['queued', 'checking', 'downloading metadata', \
                                 'downloading', 'finished', 'seeding', 'allocating']
                         # print ('%.2f%% complete (down: %.1f kb/s up: %.1f kB/s peers: %d) %s ' % \
@@ -395,10 +395,13 @@ class Downloade:
                                 break
                             except:
                                 pass
+                        # print(s.)
                         self.status = state_str[s.state]
                         self.download_speed = s.download_rate
                         self.persent = float(s.progress * 100)
-                        self.pre = r"%10d  [%3.2f%%]" % (0, self.persent)
+                        self.dl_file_size = s.total_download
+                        self.etas = round(((self.file_size - self.dl_file_size) / self.download_speed)) * 1000
+                        self.pre = r"%10d  [%3.2f%%]" % (self.dl_file_size, self.persent)
                         time.sleep(1)
                 except:
                     self.status = 'not working...'
