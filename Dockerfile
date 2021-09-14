@@ -6,14 +6,16 @@ ENV DEBIAN_FRONTEND noninteractive
 #libboost-all-dev
 WORKDIR /usr/src/app
 RUN chmod 777 /usr/src/app
-RUN apt-get -qq update
-RUN apt-get -qq install -y git python3 libpq-dev python-dev python3-pip\
-    locales python3-lxml \
-    curl pv jq ffmpeg
-
 COPY --from=libtorrent /libtorrent-build/usr/lib/ /usr/lib/
-WORKDIR /usr/lib/
+WORKDIR /usr/lib/libtorrent-rasterbar.so.1.2.6
 RUN ls
+
+# RUN apt-get -qq update
+# RUN apt-get -qq install -y git python3 libpq-dev python-dev python3-pip\
+#     locales python3-lxml \
+#     curl pv jq ffmpeg
+
+
 # COPY requirements.txt .
 
 # # RUN git clone --recurse-submodules https://github.com/arvidn/libtorrent.git
