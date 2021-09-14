@@ -28,6 +28,7 @@ WORKDIR /usr/src/app
 RUN python3 -c 'import libtorrent; print(libtorrent.__version__)'
 
 COPY requirements.txt .
+RUN pip3 install wheel
 RUN pip3 install --no-cache-dir -r requirements.txt && \
 
 # RUN locale-gen en_US.UTF-8
@@ -37,6 +38,7 @@ RUN pip3 install --no-cache-dir -r requirements.txt && \
 
 # COPY . .
 # COPY netrc /root/.netrc
+WORKDIR /usr/src/app
 RUN ls
 RUN pwd
 
