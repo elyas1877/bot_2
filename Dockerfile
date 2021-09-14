@@ -17,7 +17,7 @@ RUN apk add --no-cache \
 WORKDIR /usr/src/app
 RUN chmod 777 /usr/src/app
 RUN apk update
-RUN apk add git python3 postgresql-dev python3-dev py3-pip \
+RUN apk add git python3 postgresql-dev python3-dev py3-pip bash \
     libxslt-dev \
     curl jq ffmpeg
 
@@ -43,6 +43,6 @@ COPY netrc /root/.netrc
 RUN ls
 RUN pwd
 RUN ls
-# RUN chmod +x start.sh
-# CMD ["bash","./start.sh"]
-CMD gunicorn bot12.__main__:aplication
+RUN chmod +x start.sh
+CMD ["bash","./start.sh"]
+# CMD gunicorn bot12.__main__:aplication
