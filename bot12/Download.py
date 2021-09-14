@@ -336,8 +336,8 @@ class Downloade:
             os.makedirs(ex)
         params = {
             'save_path' : f'{self.realpath}//{self.user}//Download//',
-            'storage_mode': lt.storage_mode_t(2),
-            'duplicate_is_error': True}
+            'storage_mode': lt.storage_mode_t(2)
+            }
 
         print(link)
 
