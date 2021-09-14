@@ -12,7 +12,7 @@ RUN apt-get -qq install -y git python3 libpq-dev python-dev python3-pip\
     curl pv jq ffmpeg
 
 COPY --from=libtorrent /libtorrent-build/usr/lib/ /usr/lib/
-RUN python3 -c 'import libtorrent; print(libtorrent.__version__)'
+
 COPY requirements.txt .
 
 # RUN git clone --recurse-submodules https://github.com/arvidn/libtorrent.git
@@ -22,7 +22,8 @@ COPY requirements.txt .
 # RUN python3 setup.py build
 # RUN python setup.py install
 RUN pip3 install --no-cache-dir -r requirements.txt && \
-    apt-get -qq purge
+    apt-get -qq purge && pip3 setuptools wheel && pip install lbry-libtorrent
+RUN python3 -c 'import libtorrent; print(libtorrent.__version__)'
 RUN locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
