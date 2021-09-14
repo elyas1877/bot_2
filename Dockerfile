@@ -29,7 +29,7 @@ RUN python3 -c 'import libtorrent; print(libtorrent.__version__)'
 
 COPY requirements.txt .
 RUN pip3 install wheel
-RUN pip3 git+https://github.com/pyrogram/pyrogram
+RUN git clone https://github.com/pyrogram/pyrogram && cd pyrogram && python3 setup.py install
 RUN pip3 install --no-cache-dir -r requirements.txt && \
 
 # RUN locale-gen en_US.UTF-8
