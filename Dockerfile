@@ -10,7 +10,7 @@ FROM emmercm/libtorrent:latest
 WORKDIR /usr/src/app
 RUN chmod 777 /usr/src/app
 RUN apk update
-RUN apk add --no-cache --virtual git python3 postgresql-dev python3-dev py3-pip
+RUN apk add --no-cache git python3 postgresql-dev python3-dev py3-pip
     # locales python3-lxml \
     # ffmpeg \
 
@@ -29,6 +29,7 @@ COPY requirements.txt .
 # RUN python3 setup.py build
 # RUN python setup.py install
 RUN pip3 install --no-cache-dir -r requirements.txt
+RUN pip3 install -e git+https://github.com/pyrogram/pyrogram
 RUN python3 -c 'import libtorrent; print(libtorrent.__version__)'
 RUN locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
