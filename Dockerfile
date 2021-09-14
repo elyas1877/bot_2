@@ -1,5 +1,17 @@
 FROM ubuntu:20.04 AS ubuntu
-FROM wiserain/libtorrent:latest
+FROM wiserain/libtorrent:1.2.6-alpine3.11-py3 AS libtorrent
+FROM alpine:3.11
+
+
+RUN apk add --no-cache \
+      libstdc++ \
+      boost-system \
+      boost-python3 \
+      python3
+
+# copy libtorrent libs
+COPY --from=libtorrent /libtorrent-build/usr/lib/ /usr/lib/
+
 
 WORKDIR /usr/src/app
 RUN chmod 777 /usr/src/app
