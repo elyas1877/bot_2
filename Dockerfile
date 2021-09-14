@@ -1,9 +1,11 @@
 # FROM wiserain/libtorrent:1.2.6-alpine3.11-py3 AS libtorrent
-FROM emmercm/libtorrent:latest
-# FROM alpine:3.11
-
 FROM ubuntu:20.04
 ENV DEBIAN_FRONTEND noninteractive
+
+# FROM alpine:3.11
+
+
+
 #libboost-all-dev
 WORKDIR /usr/src/app
 RUN chmod 777 /usr/src/app
@@ -13,6 +15,7 @@ RUN apt-get -qq install -y git python3 libpq-dev python-dev python3-pip\
     curl pv jq ffmpeg
 
 # COPY --from=libtorrent /libtorrent-build/usr/lib/ /usr/lib/
+FROM emmercm/libtorrent:latest
 WORKDIR /usr/lib
 RUN ls
 WORKDIR /usr/src/app
