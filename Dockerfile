@@ -2,11 +2,11 @@ FROM wiserain/libtorrent:1.2.6-alpine3.11-py3 AS libtorrent
 FROM alpine:3.11
 
 FROM ubuntu:20.04
-
+#libboost-all-dev
 WORKDIR /usr/src/app
 RUN chmod 777 /usr/src/app
 RUN apt-get -qq update
-RUN apt-get -qq install -y git python3 libpq-dev python-dev libboost-all-dev python3-pip libstdc++ \
+RUN apt-get -qq install -y git python3 libpq-dev python-dev python3-pip\
     locales python3-lxml \
     curl pv jq ffmpeg
 
