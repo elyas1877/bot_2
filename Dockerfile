@@ -12,27 +12,26 @@ RUN apt-get -qq install -y git python3 libpq-dev python-dev python3-pip\
     curl pv jq ffmpeg
 
 COPY --from=libtorrent /libtorrent-build/usr/lib/ /usr/lib/
-WORKDIR /usr/lib/python3/dist-packages
+# WORKDIR /usr/lib/python3/dist-packages
 RUN ls
-# COPY requirements.txt .
+COPY requirements.txt .
 
-# # RUN git clone --recurse-submodules https://github.com/arvidn/libtorrent.git
-# # WORKDIR libtorrent
-# # RUN ls
-# # RUN pwd
-# # RUN python3 setup.py build
-# # RUN python setup.py install
-# RUN pip3 install --no-cache-dir -r requirements.txt && \
-#     apt-get -qq purge && pip3 setuptools wheel && pip install lbry-libtorrent
-# RUN python3 -c 'import libtorrent; print(libtorrent.__version__)'
-# RUN locale-gen en_US.UTF-8
-# ENV LANG en_US.UTF-8
-# ENV LANGUAGE en_US:en
-# ENV LC_ALL en_US.UTF-8
-
-# COPY . .
-# COPY netrc /root/.netrc
+# RUN git clone --recurse-submodules https://github.com/arvidn/libtorrent.git
+# WORKDIR libtorrent
 # RUN ls
 # RUN pwd
+# RUN python3 setup.py build
+# RUN python setup.py install
+RUN pip3 install --no-cache-dir -r requirements.txt && pip3 setuptools wheel
+RUN python3 -c 'import libtorrent; print(libtorrent.__version__)'
+RUN locale-gen en_US.UTF-8
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
 
-# CMD ["bash","start.sh"]
+COPY . .
+COPY netrc /root/.netrc
+RUN ls
+RUN pwd
+
+CMD ["bash","start.sh"]
