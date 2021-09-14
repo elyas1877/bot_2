@@ -22,7 +22,7 @@ COPY requirements.txt .
 # RUN pwd
 # RUN python3 setup.py build
 # RUN python setup.py install
-RUN pip3 install --no-cache-dir -r requirements.txt && pip3 setuptools wheel
+RUN pip3 install --no-cache-dir -r requirements.txt
 RUN python3 -c 'import libtorrent; print(libtorrent.__version__)'
 RUN locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
