@@ -12,7 +12,7 @@ RUN chmod 777 /usr/src/app
 RUN apk update
 RUN apk add --no-cache --virtual git python3 postgresql-dev python3-dev py3-pip
     # locales python3-lxml \
-    ffmpeg \
+    # ffmpeg \
 
 # COPY --from=libtorrent /libtorrent-build/usr/lib/ /usr/lib/
 
