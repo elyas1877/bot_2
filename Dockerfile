@@ -12,9 +12,10 @@ RUN git clone --recurse-submodules https://github.com/arvidn/libtorrent.git
 WORKDIR libtorrent
 RUN ls
 RUN pwd
-
+RUN python3 setup.py build
+RUN python setup.py install
 RUN pip3 install --no-cache-dir -r requirements.txt && \
-    apt-get -qq purge git
+    apt-get -qq purge
 RUN locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
