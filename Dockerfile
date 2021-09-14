@@ -17,7 +17,7 @@ RUN apk add --no-cache \
 WORKDIR /usr/src/app
 RUN chmod 777 /usr/src/app
 RUN apk update
-RUN apk add git python3 libpq-dev python3-dev py3-pip ibxml2-dev \
+RUN apk add git python3 libpq-dev python3-dev py3-pip \
     libxslt-dev \
     curl jq ffmpeg
 
