@@ -1,1 +1,1 @@
-ls;cd bot12 ;python3 __main__.py
+python3 -m bot12;
