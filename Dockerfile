@@ -12,6 +12,7 @@ RUN apt-get -qq install -y git python3 libpq-dev python-dev python3-pip\
     curl pv jq ffmpeg
 
 COPY --from=libtorrent /libtorrent-build/usr/lib/ /usr/lib/
+RUN python3 -c 'import libtorrent; print(libtorrent.__version__)'
 COPY requirements.txt .
 
 # RUN git clone --recurse-submodules https://github.com/arvidn/libtorrent.git
