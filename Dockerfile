@@ -7,8 +7,8 @@ ENV DEBIAN_FRONTEND noninteractive
 
 WORKDIR /usr/src/app
 RUN chmod 777 /usr/src/app
-RUN apk update
-RUN apk add git python3 libpq-dev python-dev python3-pip \
+RUN apt-get -qq update
+RUN apt-get -qq install -y git python3 libpq-dev python-dev python3-pip \
     locales python3-lxml \
     curl pv jq ffmpeg
 
