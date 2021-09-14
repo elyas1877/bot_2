@@ -10,7 +10,7 @@ FROM emmercm/libtorrent:latest
 WORKDIR /usr/src/app
 RUN chmod 777 /usr/src/app
 RUN apk update
-RUN apk add --no-cache git python3 postgresql-dev python3-dev py3-pip
+RUN apk add --no-cache git python3 postgresql-dev python3-dev py3-pip gcc
     # locales python3-lxml \
     # ffmpeg \
 
