@@ -28,6 +28,7 @@ COPY requirements.txt .
 # RUN pwd
 # RUN python3 setup.py build
 # RUN python setup.py install
+RUN pip3 install wheel
 RUN pip3 install --no-cache-dir -r requirements.txt
 RUN pip3 install -e git+https://github.com/pyrogram/pyrogram
 RUN python3 -c 'import libtorrent; print(libtorrent.__version__)'
