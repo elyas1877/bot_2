@@ -4,7 +4,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 # FROM alpine:3.11
 
-
+FROM emmercm/libtorrent:latest
 
 #libboost-all-dev
 WORKDIR /usr/src/app
@@ -15,7 +15,7 @@ RUN apt-get -qq install -y git python3 libpq-dev python-dev python3-pip\
     curl pv jq ffmpeg
 
 # COPY --from=libtorrent /libtorrent-build/usr/lib/ /usr/lib/
-FROM emmercm/libtorrent:latest
+
 WORKDIR /usr/lib
 RUN ls
 WORKDIR /usr/src/app
