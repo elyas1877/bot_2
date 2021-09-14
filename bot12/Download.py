@@ -337,7 +337,6 @@ class Downloade:
         params = {
             'save_path' : f'{self.realpath}//{self.user}//Download//',
             'storage_mode': lt.storage_mode_t(2),
-            'auto_managed': True,
             'duplicate_is_error': True}
 
         print(link)
