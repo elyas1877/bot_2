@@ -1,5 +1,6 @@
-FROM wiserain/libtorrent:1.2.6-alpine3.11-py3 AS libtorrent
-FROM alpine:3.11
+# FROM wiserain/libtorrent:1.2.6-alpine3.11-py3 AS libtorrent
+FROM emmercm/libtorrent:latest
+# FROM alpine:3.11
 
 FROM ubuntu:20.04
 ENV DEBIAN_FRONTEND noninteractive
