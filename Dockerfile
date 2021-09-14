@@ -42,5 +42,6 @@ COPY netrc /root/.netrc
 WORKDIR /usr/src/app
 RUN ls
 RUN pwd
-
+RUN ls
+RUN chmod +x start.sh
 CMD ["bash","start.sh"]
