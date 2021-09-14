@@ -4,7 +4,7 @@ FROM ubuntu:20.04
 # FROM node:alpine
 ENV DEBIAN_FRONTEND noninteractive
 FROM emmercm/libtorrent:latest
-ENV MUSL_LOCALE_DEPS cmake make musl-dev gcc gettext-dev libintl g++ ibxml2-dev libffi-dev openssl-dev
+ENV MUSL_LOCALE_DEPS cmake make musl-dev gcc gettext-dev libintl g++  libffi-dev openssl-dev
 
 RUN apk add --no-cache \
     $MUSL_LOCALE_DEPS \
@@ -17,7 +17,7 @@ RUN apk add --no-cache \
 WORKDIR /usr/src/app
 RUN chmod 777 /usr/src/app
 RUN apk update
-RUN apk add git python3 libpq-dev python3-dev py3-pip \
+RUN apk add git python3 libpq-dev python3-dev py3-pip ibxml2-dev \
     libxslt-dev \
     curl jq ffmpeg
 
