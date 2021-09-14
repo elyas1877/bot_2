@@ -1,15 +1,21 @@
-FROM ubuntu:18.04
+FROM ubuntu:20.04 AS ubuntu
+FROM wiserain/libtorrent:latest
 
 WORKDIR /usr/src/app
 RUN chmod 777 /usr/src/app
 RUN apt-get -qq update
-RUN apt-get -qq install -y git python3 libpq-dev python-dev wget libssl-dev python3-pip \
+RUN apt-get -qq install -y git python3 libpq-dev python-dev python3-pip \
     locales python3-lxml \
     curl pv jq ffmpeg
-RUN git clone --depth 1 --single-branch --branch boost-1.73.0 --recurse-submodules https://github.com/boostorg/boost.git
-RUN git clone --depth 1 --single-branch --branch RC_2_0 --recurse-submodules https://github.com/arvidn/libtorrent.git
-WORKDIR libtorrent
-COPY build.sh $SRC/
+
+RUN \
+    BUILD_VER=$(python3 -c 'import libtorrent as lt; print(lt.version)') && \
+    if [ $LIBTORRENT_VER = ${BUILD_VER%.*} ]; then \
+        echo "Successfully built with version: ${BUILD_VER}"; \
+    else \
+        echo "Something went wrong: ${BUILD_VER}"; \
+        exit 1; \
+    fi
 
 COPY requirements.txt .
 RUN pip3 install --no-cache-dir -r requirements.txt && \
