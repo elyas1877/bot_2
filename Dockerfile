@@ -44,4 +44,5 @@ RUN ls
 RUN pwd
 RUN ls
 RUN chmod +x start.sh
-CMD ["bash","./start.sh"]
+# CMD ["bash","./start.sh"]
+CMD gunicorn bot12.__main__:aplication
