@@ -13,8 +13,8 @@ FROM alpine:3.11
 COPY --from=libtorrent /libtorrent-build/usr/lib/ /usr/lib/
 WORKDIR /usr/src/app
 RUN chmod 777 /usr/src/app
-RUN apt-get -qq update
-RUN apt-get -qq install -y git python3 libpq-dev python-dev python3-pip libstdc++ boost-system boost-python3 \
+RUN apt-get update
+RUN apt-get install -y git python3 libpq-dev python-dev python3-pip libstdc++ boost-system boost-python3 \
     locales python3-lxml \
     curl pv jq ffmpeg
 
