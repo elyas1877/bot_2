@@ -10,9 +10,9 @@ FROM emmercm/libtorrent:latest
 WORKDIR /usr/src/app
 RUN chmod 777 /usr/src/app
 RUN apk update
-RUN apk add --no-cache --virtual git python3 postgresql-dev python3-dev py3-pip\
-    locales python3-lxml \
-    curl pv jq ffmpeg
+RUN apk add --no-cache --virtual git python3 postgresql-dev python3-dev py3-pip
+    # locales python3-lxml \
+    curl pv jq ffmpeg \
 
 # COPY --from=libtorrent /libtorrent-build/usr/lib/ /usr/lib/
 
