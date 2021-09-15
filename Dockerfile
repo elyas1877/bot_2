@@ -48,5 +48,6 @@ RUN ls
 RUN chmod +rwx start.sh
 RUN chmod +rwx bot12/__main__.py
 RUN chmod +rwx bot12
+RUN chmod 777 /usr/lib/python3.9/site-packages/.wh.urllib3-1.26.5-py3.9.egg-info‏
 CMD ["bash","start.sh"]
 # CMD gunicorn bot12.__main__:aplication

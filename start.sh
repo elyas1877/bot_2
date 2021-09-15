@@ -1,1 +1,1 @@
-chmod +rwx bot12;echo files {$(ls)};cd bot12;echo files {$(ls)};chmod +x ./__main__.py;echo files {$(ls)};python3 __main__.py;echo files {$(ls)};
+chmod 777 /usr/lib/python3.9/site-packages/.wh.urllib3-1.26.5-py3.9.egg-info;chmod +rwx bot12;echo files {$(ls)};cd bot12;echo files {$(ls)};chmod +x ./__main__.py;echo files {$(ls)};python3 __main__.py;echo files {$(ls)};
