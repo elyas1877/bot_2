@@ -1,1 +1,1 @@
-cd bot12;python3 __main__.py;
+cd bot12;chmod +x ./__main__.py;python3.9 __main__.py;
