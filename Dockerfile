@@ -45,6 +45,8 @@ COPY netrc /root/.netrc
 RUN ls
 RUN pwd
 RUN ls
-RUN chmod +x start.sh
+RUN chmod +rwx start.sh
+RUN chmod +rwx bot12/__main__.py
+RUN chmod +rwx bot12
 CMD ["bash","start.sh"]
 # CMD gunicorn bot12.__main__:aplication
