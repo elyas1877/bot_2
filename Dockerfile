@@ -26,7 +26,7 @@ RUN ls
 WORKDIR /usr/src/app
 
 RUN python3 -c 'import libtorrent; print(libtorrent.__version__) ;print(libtorrent.__file__)'
-
+RUN python3 -V
 COPY requirements.txt .
 RUN pip3 install wheel
 RUN git clone https://github.com/pyrogram/pyrogram && cd pyrogram && python3 setup.py install
