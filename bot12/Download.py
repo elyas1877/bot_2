@@ -329,6 +329,17 @@ class Downloade:
         counter = 0
         ses = lt.session()
         ses.listen_on(6881, 6891)
+        ses.add_extension('ut_metadata')
+        ses.add_extension('ut_pex')
+        ses.add_extension('metadata_transfer')
+        ses.add_dht_router("router.utorrent.com", 6881)
+        ses.add_dht_router("router.bittorrent.com", 6881)
+        ses.add_dht_router("dht.transmissionbt.com", 6881)
+        ses.add_dht_router("dht.aelitis.com", 6881)
+        ses.start_dht()
+        ses.start_lsd()
+        ses.start_upnp()
+        ses.start_natpmp()
         # 'save_path': f'E:\\torrent',
         # yam = lt.storage_mode_t(2)
         ex = os.path.join(self.realpath, self.user,'Download')
@@ -340,9 +351,10 @@ class Downloade:
             }
 
         print(link)
-
-        handle = lt.add_magnet_uri(ses, link, params)
-        ses.start_dht()
+        if link is os.path.isfile(link):
+            pass
+        else:
+            handle = lt.add_magnet_uri(ses, link, params)
 
         # begin = time.time()
         # print(datetime.datetime.now())
