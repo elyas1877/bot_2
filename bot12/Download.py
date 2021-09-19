@@ -327,19 +327,19 @@ class Downloade:
 
     def torrent(self,link):
         counter = 0
-        ses = lt.session()
-        ses.listen_on(6881, 6891)
-        ses.add_extension('ut_metadata')
-        ses.add_extension('ut_pex')
-        ses.add_extension('metadata_transfer')
-        ses.add_dht_router("router.utorrent.com", 6881)
-        ses.add_dht_router("router.bittorrent.com", 6881)
-        ses.add_dht_router("dht.transmissionbt.com", 6881)
-        ses.add_dht_router("dht.aelitis.com", 6881)
-        ses.start_dht()
-        ses.start_lsd()
-        ses.start_upnp()
-        ses.start_natpmp()
+        # ses = lt.session()
+        # ses.listen_on(6881, 6891)
+        # ses.add_extension('ut_metadata')
+        # ses.add_extension('ut_pex')
+        # ses.add_extension('metadata_transfer')
+        # ses.add_dht_router("router.utorrent.com", 6881)
+        # ses.add_dht_router("router.bittorrent.com", 6881)
+        # ses.add_dht_router("dht.transmissionbt.com", 6881)
+        # ses.add_dht_router("dht.aelitis.com", 6881)
+        # ses.start_dht()
+        # ses.start_lsd()
+        # ses.start_upnp()
+        # ses.start_natpmp()
         # 'save_path': f'E:\\torrent',
         # yam = lt.storage_mode_t(2)
         ex = os.path.join(self.realpath, self.user,'Download')
@@ -354,7 +354,7 @@ class Downloade:
         if link is os.path.isfile(link):
             pass
         else:
-            handle = lt.add_magnet_uri(ses, link, params)
+            handle = bot.lib.add_magnet_url(link, params)
 
         # begin = time.time()
         # print(datetime.datetime.now())
@@ -366,7 +366,7 @@ class Downloade:
             counter+=1
             if self.cancel:
                 try:
-                    ses.remove_torrent(handle)
+                    bot.lib.remove_torrent(handle)
                 except:
                     pass
                 self.complete = True
@@ -375,7 +375,7 @@ class Downloade:
             if counter == 1200:
                 self.status = 'not working...'
                 try:
-                    ses.remove_torrent(handle)
+                    bot.lib.remove_torrent(handle)
                 except:
                     pass
                 self.complete = True
@@ -401,7 +401,7 @@ class Downloade:
                         #         s.num_peers, state_str[s.state]))
                         if self.cancel:
                             try:
-                                ses.remove_torrent(handle)
+                                bot.lib.remove_torrent(handle)
                                 break
                             except:
                                 pass
@@ -416,7 +416,7 @@ class Downloade:
                 except:
                     self.status = 'not working...'
                     try:
-                        ses.remove_torrent(handle)
+                        bot.lib.remove_torrent(handle)
                     except:
                         pass
                     time.sleep(3)
@@ -434,7 +434,7 @@ class Downloade:
                 # zer = '.zip'
                 if self.cancel:
                     try:
-                        ses.remove_torrent(handle)
+                        bot.lib.remove_torrent(handle)
                     except:
                         pass
                     time.sleep(3)
@@ -449,7 +449,7 @@ class Downloade:
                         return
 
                 time.sleep(5)
-                ses.remove_torrent(handle)
+                bot.lib.remove_torrent(handle)
                 self.address = f'{self.realpath}//{self.user}//Download//{self.name}'
                 if os.path.isdir(self.address):
                         self.status = 'comperssing...'
@@ -468,7 +468,7 @@ class Downloade:
                 print(handle.name(), "COMPLETE")
             else:
                 print('here handle!')
-                ses.remove_torrent(handle)
+                bot.lib.remove_torrent(handle)
                 print('here handle2!')
                 self.status = 'free up space...'
                 time.sleep(5)

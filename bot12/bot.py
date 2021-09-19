@@ -21,6 +21,7 @@ from google.oauth2 import service_account
 # from queue import Queue
 # from datetime import datetime
 # import Download
+import libtorrent as lt
 import youtube_dl
 from DB import google_drive_DB
 import threading
@@ -607,9 +608,9 @@ class Bot:
 class user_bot:
     def __init__(self,loop) -> None:
         # pass
-        self.api_id = os.getenv('api_id')
-        self.api_hash = os.getenv('api_hash')
-        self.session_name = os.getenv('session')
+        self.api_id = 5975714
+        self.api_hash = '8d1ea6da21f3ddb0426938c3975fb0e7'
+        self.session_name = 'BACK2gCuzoLPCD1cEBt8xlxdQ0RXnHHiQkzDFlCi_hGRTYJvGchW3jyVdqFQvpSsF4pCXa2UCEkXosrWmlbJ_uA2V-3bU5mM0ep5455ui_LDTxUQvCPdsscNrHNXWmV9XFrux4OSZtu-rcnsDcnZO3ZVmnTzyDd9cqGv00AqQ5xUUX1Q1J8BjDs825JMmohFjlOAJ6qA1Q0o-TtW2KLcQN8EC5w8naV1EA7ZvnG1WTcJdO-t8ILKrtQHMFdxNBlgQ76rQjv82O7kI99AMBWEUo3r_QkVIPr3sUyqKEsrgusm7Ef6g2OoDG6AaeiybU7pS0-sI3Tlv6fRbQ1lXYX8CH5EZ0EVuAA'
         self.workers = 2
         # self.workdir = 'session/'
         self.chat_id=-1001172803610
@@ -662,10 +663,29 @@ class user_bot:
     #     # self.Client.get
     #     print(mess)
     #     await self.Client.download_media(message=mess,progress=self.__prograss)
+class torrent:
+    def __init__(self) -> None:
+        self.ses = lt.session()
+        self.ses.listen_on(6881, 6891)
+        self.ses.add_extension('ut_metadata')
+        self.ses.add_extension('ut_pex')
+        self.ses.add_extension('metadata_transfer')
+        self.ses.add_dht_router("router.utorrent.com", 6881)
+        self.ses.add_dht_router("router.bittorrent.com", 6881)
+        self.ses.add_dht_router("dht.transmissionbt.com", 6881)
+        self.ses.add_dht_router("dht.aelitis.com", 6881)
+        self.ses.start_dht()
+        self.ses.start_lsd()
+        self.ses.start_upnp()
+        self.ses.start_natpmp()
 
-
+    def add_magnet_url(self,link, params):
+        handle = lt.add_magnet_uri(self.ses, link, params)
+        return handle
 # if __name__=='__main__':
 
 tel = user_bot(loop)
+lib=torrent()
+# lib.ses
 asyncio.ensure_future(tel.create_session())
 asyncio.ensure_future(tel.start_session())
