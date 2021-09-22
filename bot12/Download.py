@@ -6,8 +6,6 @@ from socket import timeout
 from urllib.request import urlopen , Request
 import urllib.error, urllib.parse
 import libtorrent as lt
-# import multiprocessing
-# from pytube import YouTube,request,streams
 import youtube_dl
 import threading
 import time
@@ -22,7 +20,7 @@ import random
 import math
 from DB import google_drive_DB
 import mimetypes
-logging.basicConfig(level=logging.WARNING)
+# logging.basicConfig(level=logging.WARNING)
 class thread_with_trace(threading.Thread):
     def __init__(self, *args, **keywords):
         threading.Thread.__init__(self, *args, **keywords)
@@ -73,27 +71,6 @@ class Downloade:
         self.info_ = info
         self.name = None
         self.etas=0
-        # if url[0] is not None: 
-        #     if 'youtube' in url[0] or 'youtu' in url[0]:
-        #         video = YouTube(url[0])
-        #         video_type = video.streams.get_highest_resolution()
-        #         self.file_size = int(video_type.filesize)
-        #     else:
-        #         try:
-        #             self.name = str(url[0]).split('/')[-1]
-        #             # print('#####################')
-        #             # print(self.name)
-        #             # print('#####################')
-        #             r1=urlopen(url[0])
-        #             meta = r1.info()
-        #             # print(meta)
-        #             self.file_size = int(meta['Content-Length'])
-        #             print(self.file_size)
-        #         except:
-        #             print('error')
-        # else:
-        #     self.name = url[1].document.file_name
-        #     self.file_size = int(url[1].document.file_size)
         self.mimtype = None
         
     def __download_with_prograss(self,file_size: int):
@@ -325,11 +302,11 @@ class Downloade:
                 ziph.write(os.path.join(root, file), 
                         os.path.relpath(os.path.join(root, file), 
                                         os.path.join(path, '..')))
-    def log(self,ses):
-        alert = ses.pop_alert()
-        while alert:
-            alert = ses.pop_alert() 
-            logging.warning("[%s] %s" % (type(alert), alert.__str__()))
+    # def log(self,ses):
+    #     alert = ses.pop_alert()
+    #     while alert:
+    #         alert = ses.pop_alert() 
+    #         logging.warning("[%s] %s" % (type(alert), alert.__str__()))
 
     def torrent(self,link):
         counter = 0
@@ -362,7 +339,7 @@ class Downloade:
         else:
             handle = bot.lib.add_magnet_url(link, params)
 
-            threading.Thread(target=self.log,args=(bot.lib.ses,)).start()
+            # threading.Thread(target=self.log,args=(bot.lib.ses,)).start()
 
         # begin = time.time()
         # print(datetime.datetime.now())
