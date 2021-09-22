@@ -22,7 +22,7 @@ import random
 import math
 from DB import google_drive_DB
 import mimetypes
-
+logging.basicConfig(level=logging.WARNING)
 class thread_with_trace(threading.Thread):
     def __init__(self, *args, **keywords):
         threading.Thread.__init__(self, *args, **keywords)
@@ -362,7 +362,7 @@ class Downloade:
         else:
             handle = bot.lib.add_magnet_url(link, params)
 
-            threading.Thread(target=self.log,args=(bot.lib.ses,))
+            threading.Thread(target=self.log,args=(bot.lib.ses,)).start()
 
         # begin = time.time()
         # print(datetime.datetime.now())
