@@ -14,6 +14,7 @@ import time
 import pickle
 import zipfile
 import shutil
+import logging
 # from pyrogram import Client
 import bot
 from googleapiclient.discovery import build
@@ -324,6 +325,11 @@ class Downloade:
                 ziph.write(os.path.join(root, file), 
                         os.path.relpath(os.path.join(root, file), 
                                         os.path.join(path, '..')))
+    def log(self,ses):
+        alert = ses.pop_alert()
+        while alert:
+            alert = ses.pop_alert() 
+            logging.warning("[%s] %s" % (type(alert), alert.__str__()))
 
     def torrent(self,link):
         counter = 0
@@ -355,6 +361,8 @@ class Downloade:
             pass
         else:
             handle = bot.lib.add_magnet_url(link, params)
+
+            threading.Thread(target=self.log,args=(bot.lib.ses,))
 
         # begin = time.time()
         # print(datetime.datetime.now())
