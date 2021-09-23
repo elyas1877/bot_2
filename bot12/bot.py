@@ -665,8 +665,13 @@ class user_bot:
     #     await self.Client.download_media(message=mess,progress=self.__prograss)
 class torrent:
     def __init__(self) -> None:
-        self.ses = lt.session()
+        sett = lt.session_settings()
+        sett.user_agent = 'qBittorrent v3.3.5'
+        sett.always_send_user_agent = True
+        fingerprint = lt.fingerprint('qB', 3, 3, 5, 0)
+        self.ses = lt.session(fingerprint)
         self.ses.listen_on(6881, 6891)
+        self.ses.set_settings(sett)
         self.ses.add_extension('ut_metadata')
         self.ses.add_extension('ut_pex')
         self.ses.add_extension('metadata_transfer')
@@ -674,6 +679,7 @@ class torrent:
         self.ses.add_dht_router("router.bittorrent.com", 6881)
         self.ses.add_dht_router("dht.transmissionbt.com", 6881)
         self.ses.add_dht_router("dht.aelitis.com", 6881)
+        self.ses.add_dht_router('127.0.0.1', 6881)
         self.ses.start_dht()
         self.ses.start_lsd()
         self.ses.start_upnp()
