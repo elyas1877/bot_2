@@ -665,7 +665,7 @@ class user_bot:
     #     await self.Client.download_media(message=mess,progress=self.__prograss)
 class torrent:
     def __init__(self) -> None:
-        sett = lt.session_settings()
+        sett = lt.settings_pack()
         sett.user_agent = 'qBittorrent v3.3.5'
         sett.always_send_user_agent = True
         fingerprint = lt.fingerprint('qB', 3, 3, 5, 0)
