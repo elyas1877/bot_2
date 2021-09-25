@@ -373,12 +373,12 @@ class Downloade:
 
             print("Starting", )
             self.name = handle.name()
-            s = handle.status()
+            # s = handle.status()
             self.file_size = int(handle.get_torrent_info().total_size())
             print(self.file_size)
             if self.chek():
                 try:
-                    while (not s.is_seeding):
+                    while (handle.status().state != lt.torrent_status.seeding):
                         s = handle.status()
                         # print(s)
                         state_str = ['queued', 'checking', 'downloading metadata', \
