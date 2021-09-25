@@ -398,9 +398,17 @@ class Downloade:
                         self.dl_file_size = s.total_download
                         self.etas = round(((self.file_size - self.dl_file_size) / self.download_speed)) * 1000
                         self.pre = r"%10d  [%3.2f%%]" % (self.dl_file_size, self.persent)
+                        alerts = ses.pop_alerts()
+                        for a in alerts:
+                            if a.category() & lt.alert.category_t.error_notification:
+                                print(a)
                         time.sleep(1)
                 except:
                     self.status = 'not working...'
+                    alerts = ses.pop_alerts()
+                    for a in alerts:
+                        if a.category() & lt.alert.category_t.error_notification:
+                            print(a)
                     try:
                         ses.remove_torrent(handle)
                     except:
