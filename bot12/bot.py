@@ -37,6 +37,7 @@ from urllib.parse import urlparse
 # load_dotenv()
 loop = asyncio.get_event_loop()
 
+
 class Bot:
     logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
     logger = logging.getLogger(__name__)
@@ -663,14 +664,17 @@ class user_bot:
     #     # self.Client.get
     #     print(mess)
     #     await self.Client.download_media(message=mess,progress=self.__prograss)
-class torrent:
+
+# if __name__=='__main__':
+class Torrent:
     def __init__(self) -> None:
         # sett = lt.settings_pack()
         # sett.user_agent = 'qBittorrent v3.3.5'
         # sett.always_send_user_agent = True
         fingerprint = lt.fingerprint("UT", 3, 4, 5, 0)
         self.ses = lt.session(fingerprint)
-        self.ses.listen_on(6881, 6891)
+        rand = random.randrange(17000, 18000)
+        self.ses.listen_on(rand, rand+10)
         # self.ses.set_settings()
         self.ses.add_extension('ut_metadata')
         self.ses.add_extension('ut_pex')
@@ -688,10 +692,10 @@ class torrent:
     def add_magnet_url(self,link, params):
         handle = lt.add_magnet_uri(self.ses, link, params)
         return handle
-# if __name__=='__main__':
+
 
 tel = user_bot(loop)
-lib=torrent()
+# lib=Torrent()
 # lib.ses
 asyncio.ensure_future(tel.create_session())
 asyncio.ensure_future(tel.start_session())

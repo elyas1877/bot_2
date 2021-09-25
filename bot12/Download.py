@@ -337,7 +337,8 @@ class Downloade:
         if link is os.path.isfile(link):
             pass
         else:
-            handle = bot.lib.add_magnet_url(link, params)
+            ses = bot.Torrent()
+            handle = ses.add_magnet_url(link, params)
 
             # threading.Thread(target=self.log,args=(bot.lib.ses,)).start()
 
@@ -351,7 +352,7 @@ class Downloade:
             counter+=1
             if self.cancel:
                 try:
-                    bot.lib.ses.remove_torrent(handle)
+                    ses.remove_torrent(handle)
                 except:
                     pass
                 self.complete = True
@@ -360,7 +361,7 @@ class Downloade:
             if counter == 1200:
                 self.status = 'not working...'
                 try:
-                    bot.lib.ses.remove_torrent(handle)
+                    ses.remove_torrent(handle)
                 except:
                     pass
                 self.complete = True
@@ -386,7 +387,7 @@ class Downloade:
                         #         s.num_peers, state_str[s.state]))
                         if self.cancel:
                             try:
-                                bot.lib.ses.remove_torrent(handle)
+                                ses.remove_torrent(handle)
                                 break
                             except:
                                 pass
@@ -401,7 +402,7 @@ class Downloade:
                 except:
                     self.status = 'not working...'
                     try:
-                        bot.lib.ses.remove_torrent(handle)
+                        ses.remove_torrent(handle)
                     except:
                         pass
                     time.sleep(3)
@@ -419,7 +420,7 @@ class Downloade:
                 # zer = '.zip'
                 if self.cancel:
                     try:
-                        bot.lib.ses.remove_torrent(handle)
+                        ses.remove_torrent(handle)
                     except:
                         pass
                     time.sleep(3)
@@ -434,7 +435,7 @@ class Downloade:
                         return
 
                 time.sleep(5)
-                bot.lib.ses.remove_torrent(handle)
+                ses.remove_torrent(handle)
                 self.address = f'{self.realpath}//{self.user}//Download//{self.name}'
                 if os.path.isdir(self.address):
                         self.status = 'comperssing...'
@@ -453,7 +454,7 @@ class Downloade:
                 print(handle.name(), "COMPLETE")
             else:
                 print('here handle!')
-                bot.lib.ses.remove_torrent(handle)
+                ses.remove_torrent(handle)
                 print('here handle2!')
                 self.status = 'free up space...'
                 time.sleep(5)
