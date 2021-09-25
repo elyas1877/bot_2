@@ -373,11 +373,12 @@ class Downloade:
 
             print("Starting", )
             self.name = handle.name()
+            s = handle.status()
             self.file_size = int(handle.get_torrent_info().total_size())
             print(self.file_size)
             if self.chek():
                 try:
-                    while (handle.status().state != lt.torrent_status.seeding):
+                    while (not s.is_seeding):
                         s = handle.status()
                         # print(s)
                         state_str = ['queued', 'checking', 'downloading metadata', \
@@ -398,17 +399,17 @@ class Downloade:
                         self.dl_file_size = s.total_download
                         self.etas = round(((self.file_size - self.dl_file_size) / self.download_speed)) * 1000
                         self.pre = r"%10d  [%3.2f%%]" % (self.dl_file_size, self.persent)
-                        alerts = ses.pop_alerts()
-                        for a in alerts:
-                            if a.category() & lt.alert.category_t.error_notification:
-                                print(a)
+                        # alerts = ses.pop_alerts()
+                        # for a in alerts:
+                        #     if a.category() & lt.alert.category_t.error_notification:
+                        #         print(a)
                         time.sleep(1)
                 except:
                     self.status = 'not working...'
-                    alerts = ses.pop_alerts()
-                    for a in alerts:
-                        if a.category() & lt.alert.category_t.error_notification:
-                            print(a)
+                    # alerts = ses.pop_alerts()
+                    # for a in alerts:
+                    #     if a.category() & lt.alert.category_t.error_notification:
+                    #         print(a)
                     try:
                         ses.remove_torrent(handle)
                     except:
