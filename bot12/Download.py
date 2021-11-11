@@ -377,8 +377,8 @@ class Downloade:
             self.file_size = int(handle.get_torrent_info().total_size())
             print(self.file_size)
             if self.chek():
-                # try:
-                while (handle.status().state != lt.torrent_status.seeding):
+                try:
+                    while (handle.status().state != lt.torrent_status.seeding):
                         s = handle.status()
                         # print(s)
                         state_str = ['queued', 'checking', 'downloading metadata', \
@@ -397,34 +397,37 @@ class Downloade:
                         self.download_speed = s.download_rate
                         self.persent = float(s.progress * 100)
                         self.dl_file_size = s.total_download
-                        self.etas = round(((self.file_size - self.dl_file_size) / self.download_speed)) * 1000
+                        try:
+                            self.etas = round(((self.file_size - self.dl_file_size) / self.download_speed)) * 1000
+                        except:
+                            pass
                         self.pre = r"%10d  [%3.2f%%]" % (self.dl_file_size, self.persent)
                         # alerts = ses.pop_alerts()
                         # for a in alerts:
                         #     if a.category() & lt.alert.category_t.error_notification:
                         #         print(a)
                         time.sleep(1)
-                # except Exception as e:
-                #     print(e)
-                #     self.status = 'not working...'
-                #     # alerts = ses.pop_alerts()
-                #     # for a in alerts:
-                #     #     if a.category() & lt.alert.category_t.error_notification:
-                #     #         print(a)
-                #     try:
-                #         ses.ses.remove_torrent(handle)
-                #     except:
-                #         pass
-                #     time.sleep(3)
-                #     if os.path.isdir(f'{self.realpath}//{self.user}//Download//{self.name}'):
-                #         shutil.rmtree(f'{self.realpath}//{self.user}//Download//{self.name}')
-                #         self.complete = True
-                #         print(1)
-                #         return
-                #     else:
-                #         os.remove(f'{self.realpath}//{self.user}//Download//{self.name}')
-                #         self.complete = True
-                #         return
+                except Exception as e:
+                    print(e)
+                    self.status = 'not working...'
+                    # alerts = ses.pop_alerts()
+                    # for a in alerts:
+                    #     if a.category() & lt.alert.category_t.error_notification:
+                    #         print(a)
+                    try:
+                        ses.ses.remove_torrent(handle)
+                    except:
+                        pass
+                    time.sleep(3)
+                    if os.path.isdir(f'{self.realpath}//{self.user}//Download//{self.name}'):
+                        shutil.rmtree(f'{self.realpath}//{self.user}//Download//{self.name}')
+                        self.complete = True
+                        print(1)
+                        return
+                    else:
+                        os.remove(f'{self.realpath}//{self.user}//Download//{self.name}')
+                        self.complete = True
+                        return
                     # pass
                 # end = time.time()
                 # zer = '.zip'
