@@ -16,6 +16,8 @@ RUN apk add --no-cache \
       && cmake -DLOCALE_PROFILE=OFF -D CMAKE_INSTALL_PREFIX:PATH=/usr . && make && make install \
       && cd .. && rm -r musl-locales-master
 
+COPY --from=libtorrent /libtorrent-build/usr/lib/ /usr/lib/
+
 WORKDIR /usr/src/app
 RUN chmod 777 /usr/src/app
 RUN apk update
