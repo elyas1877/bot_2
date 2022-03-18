@@ -4,7 +4,7 @@ FROM ubuntu:21.04
 # FROM node:alpine
 ENV DEBIAN_FRONTEND noninteractive
 # FROM emmercm/libtorrent:latest
-FROM wiserain/libtorrent:2.0.5-ubuntu21.04
+FROM wiserain/libtorrent:2.0.5-alpine3.15
 
 ENV MUSL_LOCALE_DEPS cmake make musl-dev gcc gettext-dev libintl g++  libffi-dev openssl-dev
 
