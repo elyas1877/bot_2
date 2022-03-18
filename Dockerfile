@@ -3,7 +3,7 @@
 # FROM wiserain/libtorrent:1.2.6-alpine3.11-py3 AS libtorrent
 # FROM node:alpine
 # FROM emmercm/libtorrent:latest
-FROM ghcr.io/by275/libtorrent:2.0.5-alpine3.15 AS libtorrent
+FROM wiserain/libtorrent:2.0.5-alpine3.15 AS libtorrent
 FROM alpine:3.15
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -27,16 +27,17 @@ RUN apk update
 RUN apk add git python3 postgresql-dev python3-dev py3-pip bash libmagic\
     libxslt-dev \
     curl jq ffmpeg
-    
+
 COPY --from=libtorrent /libtorrent-build/usr/lib/ /usr/lib/
 
 
 WORKDIR /usr/lib/
 RUN ls
+
 WORKDIR /usr/src/app
 
 
-RUN python3 -c 'import libtorrent; print(libtorrent.__version__) ;print(libtorrent.__file__)'
+RUN python3 -c 'import libtorrent; print(libtorrent.__version__) ;'
 RUN python3 -V
 COPY requirements.txt .
 RUN pip3 install wheel
