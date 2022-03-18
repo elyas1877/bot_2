@@ -37,7 +37,7 @@ RUN ls
 WORKDIR /usr/src/app
 
 
-RUN python3 -c 'import libtorrent; print(libtorrent.__version__) ;'
+# RUN python3 -c 'import libtorrent; print(libtorrent.__version__) ;'
 RUN python3 -V
 COPY requirements.txt .
 RUN pip3 install wheel
