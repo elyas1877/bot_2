@@ -1,10 +1,13 @@
 
-FROM ubuntu:21.04
+# FROM ubuntu:21.04
 # FROM wiserain/libtorrent:1.2.6-alpine3.11-py3 AS libtorrent
 # FROM node:alpine
-ENV DEBIAN_FRONTEND noninteractive
 # FROM emmercm/libtorrent:latest
-FROM wiserain/libtorrent:2.0.5-alpine3.15 AS libtorrent
+FROM ghcr.io/by275/libtorrent:2.0.5-alpine3.15 AS libtorrent
+FROM alpine:3.15
+ENV DEBIAN_FRONTEND noninteractive
+
+# FROM wiserain/libtorrent:2.0.5-alpine3.15 AS libtorrent
 
 ENV MUSL_LOCALE_DEPS cmake make musl-dev gcc gettext-dev libintl g++  libffi-dev openssl-dev
 
