@@ -27,12 +27,14 @@ RUN apk update
 RUN apk add git python3 postgresql-dev python3-dev py3-pip bash libmagic\
     libxslt-dev \
     curl jq ffmpeg
+    
+COPY --from=libtorrent /libtorrent-build/usr/lib/ /usr/lib/
+
 
 WORKDIR /usr/lib/
 RUN ls
 WORKDIR /usr/src/app
 
-COPY --from=libtorrent /libtorrent-build/usr/lib/ /usr/lib/
 
 RUN python3 -c 'import libtorrent; print(libtorrent.__version__) ;print(libtorrent.__file__)'
 RUN python3 -V
