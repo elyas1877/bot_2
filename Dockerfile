@@ -1,5 +1,5 @@
 
-FROM ubuntu:18.04
+FROM ubuntu:21.04
 # FROM wiserain/libtorrent:1.2.6-alpine3.11-py3 AS libtorrent
 # FROM node:alpine
 ENV DEBIAN_FRONTEND noninteractive
