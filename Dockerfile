@@ -24,7 +24,7 @@ RUN apk add --no-cache \
 WORKDIR /usr/src/app
 RUN chmod 777 /usr/src/app
 RUN apk update
-RUN apk add git python3 postgresql-dev python3-dev py3-pip bash libmagic\
+RUN apk add git python3 postgresql-dev libboost-dev libboost-all-dev boost-dev python3-dev py3-pip bash libmagic\
     libxslt-dev \
     curl jq ffmpeg
 
