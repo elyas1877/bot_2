@@ -4,7 +4,7 @@ FROM ubuntu:21.04
 # FROM node:alpine
 ENV DEBIAN_FRONTEND noninteractive
 # FROM emmercm/libtorrent:latest
-FROM wiserain/libtorrent:2.0.5-alpine3.15
+FROM wiserain/libtorrent:2.0.5-alpine3.15 AS libtorrent
 
 ENV MUSL_LOCALE_DEPS cmake make musl-dev gcc gettext-dev libintl g++  libffi-dev openssl-dev
 
@@ -16,7 +16,7 @@ RUN apk add --no-cache \
       && cmake -DLOCALE_PROFILE=OFF -D CMAKE_INSTALL_PREFIX:PATH=/usr . && make && make install \
       && cd .. && rm -r musl-locales-master
 
-COPY --from=libtorrent /libtorrent-build/usr/lib/ /usr/lib/
+
 
 WORKDIR /usr/src/app
 RUN chmod 777 /usr/src/app
@@ -28,6 +28,8 @@ RUN apk add git python3 postgresql-dev python3-dev py3-pip bash libmagic\
 WORKDIR /usr/lib/
 RUN ls
 WORKDIR /usr/src/app
+
+COPY --from=libtorrent /libtorrent-build/usr/lib/ /usr/lib/
 
 RUN python3 -c 'import libtorrent; print(libtorrent.__version__) ;print(libtorrent.__file__)'
 RUN python3 -V
