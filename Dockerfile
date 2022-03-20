@@ -3,7 +3,8 @@
 # FROM wiserain/libtorrent:1.2.6-alpine3.11-py3 AS libtorrent
 # FROM node:alpine
 # FROM emmercm/libtorrent:latest
-FROM wiserain/libtorrent:latest-alpine3.15 AS libtorrent
+# FROM wiserain/libtorrent:latest-alpine3.15 AS libtorrent
+FROM emmercm/libtorrent:latest
 FROM alpine:3.15
 ENV DEBIAN_FRONTEND noninteractive
 #
@@ -28,7 +29,7 @@ RUN apk add git python3 postgresql-dev  python3-dev py3-pip bash libmagic\
     libxslt-dev \
     curl jq ffmpeg
 
-COPY --from=libtorrent /libtorrent-build/usr/lib/ /usr/lib/
+# COPY --from=libtorrent /libtorrent-build/usr/lib/ /usr/lib/
 
 
 WORKDIR /usr/lib/
