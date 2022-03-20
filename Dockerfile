@@ -3,10 +3,9 @@
 # FROM wiserain/libtorrent:1.2.6-alpine3.11-py3 AS libtorrent
 # FROM node:alpine
 # FROM emmercm/libtorrent:latest
-# FROM wiserain/libtorrent:latest-alpine3.15 AS libtorrent
 FROM alpine:3.15
-FROM emmercm/libtorrent:latest
-
+FROM wiserain/libtorrent:latest-alpine3.15 AS libtorrent
+# FROM emmercm/libtorrent:latest
 ENV DEBIAN_FRONTEND noninteractive
 #
 # FROM wiserain/libtorrent:2.0.5-alpine3.15 AS libtorrent
@@ -26,7 +25,7 @@ RUN apk add --no-cache \
 WORKDIR /usr/src/app
 RUN chmod 777 /usr/src/app
 RUN apk update
-RUN apk add git python3 postgresql-dev  python3-dev py3-pip bash libmagic boost-python3 boost-system libgcc libstdc++\
+RUN apk add git python3 postgresql-dev  python3-dev py3-pip bash libmagic boost-python3 boost-system libgcc libstdc++ boost-build boost-dev py3-setuptools samurai\
     libxslt-dev \
     curl jq ffmpeg
 
