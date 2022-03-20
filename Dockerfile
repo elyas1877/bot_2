@@ -4,8 +4,9 @@
 # FROM node:alpine
 # FROM emmercm/libtorrent:latest
 # FROM wiserain/libtorrent:latest-alpine3.15 AS libtorrent
-FROM emmercm/libtorrent:latest
 FROM alpine:3.15
+FROM emmercm/libtorrent:latest
+
 ENV DEBIAN_FRONTEND noninteractive
 #
 # FROM wiserain/libtorrent:2.0.5-alpine3.15 AS libtorrent
