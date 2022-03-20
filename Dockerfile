@@ -3,8 +3,8 @@
 # FROM wiserain/libtorrent:1.2.6-alpine3.11-py3 AS libtorrent
 # FROM node:alpine
 # FROM emmercm/libtorrent:latest
-FROM wiserain/libtorrent:latest-alpine3.15 AS libtorrent
-FROM alpine:3.15
+FROM wiserain/libtorrent:latest-alpine3.13 AS libtorrent
+FROM alpine:3.13
 
 # FROM emmercm/libtorrent:latest
 ENV DEBIAN_FRONTEND noninteractive
