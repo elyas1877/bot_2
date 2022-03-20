@@ -29,7 +29,7 @@ RUN apk add git python3 postgresql-dev  python3-dev py3-pip bash libmagic boost-
     libxslt-dev \
     curl jq ffmpeg
 
-# COPY --from=libtorrent /libtorrent-build/usr/lib/ /usr/lib/
+COPY --from=libtorrent /libtorrent-build/usr/lib/ /usr/lib/
 
 
 WORKDIR /usr/lib/
